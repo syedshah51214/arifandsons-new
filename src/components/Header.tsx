@@ -6,6 +6,7 @@ export default function Header() {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -137,6 +138,43 @@ export default function Header() {
               <span>Contact Us</span>
             </Link>
           </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" className="p-2 rounded-md text-gray-300 hover:text-amber-400 focus:outline-none">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {mobileOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      <div className={`md:hidden fixed inset-0 z-40 transform transition-transform duration-300 ${mobileOpen ? 'translate-y-0' : '-translate-y-full'}`}>
+        <div className="bg-gray-900/95 backdrop-blur-lg h-full w-full p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-2xl font-bold text-amber-500">Arif & Sons</div>
+            <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-2 text-gray-300 hover:text-amber-400">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <nav className="flex flex-col gap-4">
+            <a href="#" onClick={(e) => { e.preventDefault(); handleHomeClick(e as any); setMobileOpen(false); }} className="text-lg text-gray-200">Home</a>
+            <button onClick={(e) => { handleScrollToSection(e as any, 'company-overview'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Company Overview</button>
+            <button onClick={(e) => { handleScrollToSection(e as any, 'our-team'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Our Team</button>
+            <button onClick={() => { navigate('/services'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Services</button>
+            <button onClick={(e) => { handleScrollToSection(e as any, 'my-projects'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Projects</button>
+            <button onClick={(e) => { handleScrollToSection(e as any, 'clients'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Clients</button>
+            <button onClick={(e) => { handleScrollToSection(e as any, 'contact'); setMobileOpen(false); }} className="text-left text-lg text-amber-400 font-semibold">Contact Us</button>
+          </nav>
         </div>
       </div>
     </header>
