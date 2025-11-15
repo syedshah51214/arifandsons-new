@@ -19,6 +19,8 @@ import marlaLakeCity1 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY.jp
 import marlaLakeCity2 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY 2.jpg';
 import marlaLakeCity3 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY 3.jpg';
 import marlaUnderConstruction from './assets/projects/my-projects/5 MARLA UNDER CONSTRUCTION.jpg';
+import logo from './assets/logo.jpg';
+import CEO from './assets/CEO.jpg';
 
 function ScalePattern() {
   return (
@@ -244,7 +246,7 @@ function HomePage() {
                   <div className="relative flex items-center justify-center transform group-hover:scale-105 transition-all duration-300">
                     <div id="header-logo-container" className="w-20 h-20 transition-all duration-300 logo-container flex items-center justify-center bg-gray-800/95 backdrop-blur-sm rounded-xl border border-amber-500/20 hover:border-amber-500/40 shadow-lg overflow-hidden">
                       <img 
-                        src="/src/assets/logo.jpg" 
+                        src={logo} 
                         alt="Arif & Sons Logo" 
                         className="w-full h-full object-contain p-2"
                       />
@@ -662,7 +664,7 @@ function HomePage() {
               <div className="relative overflow-hidden rounded-2xl border-2 border-amber-500/20 group-hover:border-amber-500/40 transition-colors">
                 <div className="aspect-[4/5] relative">
                   <img 
-                    src="/src/assets/CEO.jpg" 
+                    src={CEO} 
                     alt="Suleiman Arif Hussain - CEO of Arif & Sons Construction Co." 
                     className="absolute inset-0 w-full h-full object-cover object-center"
                   />
