@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Cursor Styles */
+* {
+  cursor: pointer !important;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+:root {
+  cursor: url('/br.png'), auto;
+}
+
+* {
+  cursor: inherit;
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  cursor: url('/br.png'), auto !important;
+}
+
 /* Intro Animations */
 .intro-section {
   position: fixed;
@@ -134,4 +159,18 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Marquee for clients slider */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  will-change: transform;
+  animation: marquee 20s linear infinite;
 }

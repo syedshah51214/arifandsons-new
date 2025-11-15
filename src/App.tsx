@@ -1,7 +1,13 @@
 import { Building2, Phone, Mail, MapPin, Award, Users, Wrench, CheckCircle2, ArrowRight } from 'lucide-react';
 import backgroundImage from './assets/background image/1.jpg';
-import logo from './assets/logo.jpg';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { Routes, Route, useNavigate, Link } from 'react-router-dom';
+import TeamMarquee from './components/TeamMarquee';
+import ClientsSlider from './components/ClientsSlider';
+import Services from './pages/Services';
+import AIchatbot from './components/AIchatbot';
+import introVideo from './assets/abc.mp4';
+import styles from './styles/Cursor.module.css';
 import marla1 from './assets/projects/my-projects/5 MARLA 1.jpg';
 import marla2 from './assets/projects/my-projects/5 MARLA 2.jpg';
 import marla3 from './assets/projects/my-projects/5 MARLA 3.jpg';
@@ -12,7 +18,6 @@ import marla7 from './assets/projects/my-projects/5 MARLA 7.jpg';
 import marlaLakeCity1 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY.jpg';
 import marlaLakeCity2 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY 2.jpg';
 import marlaLakeCity3 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY 3.jpg';
-import marlaLakeCity4 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY 4.jpg';
 import marlaUnderConstruction from './assets/projects/my-projects/5 MARLA UNDER CONSTRUCTION.jpg';
 
 function ScalePattern() {
@@ -50,27 +55,164 @@ function animateCounter() {
   });
 }
 
-function App() {
+function HomePage() {
+  const handleScroll = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    event.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  // Hide the full-screen intro overlay during development to avoid a blocking blank screen
+  const [showLogoOverlay, setShowLogoOverlay] = useState(true);
+  // introVideo imported from `src/assets/abc.mp4`
+  // If you replace the file, keep the same import path or update this import.
+
+  const lastScrollY = useRef<number>(typeof window !== 'undefined' ? window.scrollY : 0);
+  const lastToggle = useRef<number>(0);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [videoEnded, setVideoEnded] = useState(false);
+  // Track if mouse is hovering over video
+  const [isHovered, setIsHovered] = useState(false);
+  const minDisplayMs = 1500; // 1.5s minimum display time
+  const minDisplayUntil = useRef<number>(Date.now() + minDisplayMs);
+
+  // Effect to handle video looping
+  useEffect(() => {
+    if (videoRef.current && !isHovered) {
+      videoRef.current.loop = true;
+      videoRef.current.play().catch(console.error);
+    }
+  }, [isHovered]);
+
   useEffect(() => {
     animateCounter();
-    
+
     const handleScroll = () => {
       const header = document.getElementById('main-header');
+      const statsSection = document.getElementById('stats-section');
+      const now = Date.now();
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollY.current;
+
+      // Trigger counter animation when stats section comes into view
+      if (statsSection && !statsSection.classList.contains('animate-counters-done')) {
+        const statsRect = statsSection.getBoundingClientRect();
+        if (statsRect.top < window.innerHeight && statsRect.bottom > 0) {
+          animateCounter();
+          statsSection.classList.add('animate-counters-done');
+        }
+      }
+
+      // header shrink/expand behavior unchanged
       if (header) {
-        if (window.scrollY > 50) {
+        if (currentY > 50) {
           header.classList.add('header-scrolled');
         } else {
           header.classList.remove('header-scrolled');
         }
       }
+
+      // If the intro video hasn't finished, don't toggle the overlay on scroll
+      if (!videoEnded) {
+        lastScrollY.current = currentY;
+        return;
+      }
+
+      // If scrolling down (delta > 0) hide overlay after a small threshold
+      if (delta > 0 && currentY > 30) {
+        // small debounce to avoid thrash
+        if (showLogoOverlay) {
+          setShowLogoOverlay(false);
+          lastToggle.current = now;
+        }
+      }
+
+      // If scrolling up (delta < 0) show the full-screen overlay again
+      if (delta < 0) {
+        // only toggle if enough time passed to avoid flicker
+        if (!showLogoOverlay && now - lastToggle.current > 300) {
+          setShowLogoOverlay(true);
+          lastToggle.current = now;
+        }
+      }
+
+      lastScrollY.current = currentY;
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
+    // Ensure video playback is attempted programmatically (muted autoplay is allowed)
+    setTimeout(() => {
+      try {
+        videoRef.current?.play();
+      } catch (e) {
+        // ignore play errors (autoplay policy, etc.)
+      }
+    }, 50);
+
+    // Auto-hide fallback: if the video never fires `ended` (or is slow), hide overlay after a safe timeout
+    const autoHideMs = 7000; // safety > minDisplayMs
+    const autoHideTimer = setTimeout(() => {
+      // respect minimum display time
+      const now = Date.now();
+      if (now >= minDisplayUntil.current) setShowLogoOverlay(false);
+      else setTimeout(() => setShowLogoOverlay(false), minDisplayUntil.current - now);
+    }, autoHideMs);
+
+    // Clean up
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(autoHideTimer);
+    };
+  }, [showLogoOverlay]);
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className={`min-h-screen bg-gray-900 ${styles.customCursor}`}>
+      {/* Front-screen logo & company name overlay (visible until user scrolls) */}
+      {/* Intro video overlay: plays `/src/assets/intro.mp4` if present. Click or press Skip to dismiss early. */}
+      <div
+        className={`fixed inset-0 z-[110] bg-black flex items-center justify-center transition-opacity duration-500 ${showLogoOverlay ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        style={{ cursor: 'pointer' }}
+        onClick={() => setShowLogoOverlay(false)}
+        role="button"
+        tabIndex={0}
+        aria-label="Intro video overlay. Click to skip"
+      >
+        <video
+          id="intro-video"
+          ref={(el) => { videoRef.current = el; }}
+          src={introVideo}
+          className="w-full h-full object-cover"
+          autoPlay
+          muted
+          playsInline
+          loop
+          onMouseEnter={() => {
+            setIsHovered(true);
+            if (videoRef.current) {
+              videoRef.current.loop = false;
+              setShowLogoOverlay(false);
+            }
+          }}
+          onEnded={() => {
+            // Only handle end if user has hovered
+            if (isHovered) {
+              setVideoEnded(true);
+              setShowLogoOverlay(false);
+            }
+          }}
+        />
+
+        {/* Skip button — visible on top-right */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); setShowLogoOverlay(false); }}
+          className="absolute top-6 right-6 z-[120] bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10"
+        >
+          Skip
+        </button>
+      </div>
       {/* WhatsApp chat button */}
       <a
         href="https://wa.me/923258579677?text=Hi%20Arif%20%26%20Sons,%20I%20need%20a%20quote"
@@ -88,6 +230,9 @@ function App() {
           <path d="M17.5 13.5c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15s-.78.97-.96 1.17c-.18.2-.36.22-.66.07-.3-.15-1.26-.46-2.39-1.48-.88-.78-1.48-1.74-1.66-2.04-.18-.3-.02-.46.13-.61.13-.13.3-.36.45-.54.15-.18.2-.3.3-.5.1-.2 0-.37-.04-.52-.04-.15-.68-1.63-.93-2.24-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01s-.52.07-.8.37c-.28.3-1.08 1.04-1.08 2.54 0 1.5 1.11 2.95 1.26 3.15.15.2 2.18 3.34 5.28 4.68 3.1 1.34 3.1.89 3.66.83.56-.06 1.77-.72 2.02-1.41.25-.69.25-1.28.17-1.41-.08-.13-.28-.2-.58-.35z" fill="#fff" />
         </svg>
       </a>
+
+      {/* AI Chatbot */}
+      <AIchatbot />
 
       <nav id="main-header" className="fixed top-0 w-full bg-gray-900/95 backdrop-blur-sm border-b border-amber-500/10 shadow-lg z-50 transition-all duration-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,18 +267,57 @@ function App() {
               
               {/* Navigation Links */}
               <div className="hidden md:flex items-center gap-6 lg:gap-8">
-                <a href="#services" className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium relative group">
-                  <span>Services</span>
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
-                </a>
-                <a href="#about" className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium relative group">
-                  <span>About</span>
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
-                </a>
-                <a href="#projects" className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium relative group">
-                  <span>Projects</span>
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
-                </a>
+                  <Link to="/" className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium relative group">
+                    <span>Home</span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                  </Link>
+
+                  {/* About Us Dropdown */}
+                  <div className="relative group">
+                    <button className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1">
+                      <span>About Us</span>
+                      <svg className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    <div className="absolute top-full left-0 mt-2 w-48 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      <a href="#company-overview" onClick={(e) => handleScroll(e, 'company-overview')} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Company Overview</a>
+                      <a href="#our-team" onClick={(e) => handleScroll(e, 'our-team')} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Our Team</a>
+                      <a href="#vision-mission" onClick={(e) => handleScroll(e, 'vision-mission')} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Vision & Mission</a>
+                      <a href="#infrastructure" onClick={(e) => handleScroll(e, 'infrastructure')} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Infrastructure</a>
+                    </div>
+                  </div>
+
+                  <Link to="/services" className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium relative group">
+                    <span>Services</span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                  </Link>
+
+                  {/* Projects Dropdown */}
+                  <div className="relative group">
+                    <button className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1">
+                      <span>Projects</span>
+                      <svg className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    <div className="absolute top-full left-0 mt-2 w-48 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      <Link to="#/ongoing-projects" className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Ongoing Projects</Link>
+                      <Link to="#/completed-projects" className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Completed Projects</Link>
+                    </div>
+                  </div>
+
+                  {/* Clients */}
+                  <a href="#clients" onClick={(e) => handleScroll(e, 'clients')} className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium relative group">
+                    <span>Clients</span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                  </a>
+
+                  {/* Contact */}
+                  <a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium relative group">
+                    <span>Contact</span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
+                  </a>
               </div>
             </div>
             
@@ -146,7 +330,7 @@ function App() {
             
             {/* Call to Action Button */}
             <div className="hidden md:block">
-              <a href="#contact" 
+              <a href="https://wa.me/923258579677?text=Hello%20Arif%20and%20Sons%2C%20I%20need%20a%20quote" target="_blank" rel="noopener noreferrer"
                 className="relative inline-flex items-center justify-center px-6 py-2.5 lg:px-8 lg:py-3 font-medium overflow-hidden group bg-amber-500 rounded-xl hover:bg-amber-600 transition-all duration-300">
                 <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-amber-700 rounded-full group-hover:w-56 group-hover:h-56"></span>
                 <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
@@ -184,82 +368,144 @@ function App() {
               <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl animate-slideUp delay-100">
                 From residential dreams to commercial landmarks, we deliver turnkey construction solutions with uncompromising quality and safety standards.
               </p>
-              <div className="flex flex-wrap gap-6 animate-slideUp delay-200">
-                <a href="#contact" 
-                   className="group bg-amber-500 text-gray-900 px-8 py-4 rounded-xl hover:bg-amber-400 transition-all duration-300 font-semibold shadow-lg hover:shadow-amber-500/20 hover:-translate-y-1 flex items-center gap-3 relative overflow-hidden">
-                  <span className="relative z-10">Start Your Project</span>
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-500 transform translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500"></div>
-                </a>
-                <a href="#services" 
-                   className="group bg-gray-800/50 backdrop-blur-sm text-white px-8 py-4 rounded-xl hover:bg-gray-700/50 transition-all duration-300 font-semibold flex items-center gap-3 border border-amber-500/20 hover:border-amber-500/30 hover:-translate-y-1">
-                  Our Services
-                  <ArrowRight className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-10px] group-hover:translate-x-0" />
-                </a>
-              </div>
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
-              <div className="flex gap-4 justify-center mt-8">
-                {/* Stats Boxes */}
-                <div className="bg-gray-900/90 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center flex-1 max-w-[220px] border border-amber-500/20 hover:-translate-y-1">
-                  <Award className="h-10 w-10 text-amber-400 mb-3 mx-auto" />
-                  <h3 className="text-3xl font-bold text-white mb-2" data-value="500">
-                    <span className="counter">0</span>+
-                  </h3>
-                  <p className="text-sm text-gray-300 font-medium">Projects</p>
-                </div>
-                <div className="bg-gray-900/90 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center flex-1 max-w-[220px] border border-amber-500/20 hover:-translate-y-1">
-                  <Users className="h-10 w-10 text-amber-400 mb-3 mx-auto" />
-                  <h3 className="text-3xl font-bold text-white mb-2" data-value="200">
-                    <span className="counter">0</span>+
-                  </h3>
-                  <p className="text-sm text-gray-300 font-medium">Experts</p>
-                </div>
-                <div className="bg-gray-900/90 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center flex-1 max-w-[220px] border border-amber-500/20 hover:-translate-y-1">
-                  <CheckCircle2 className="h-10 w-10 text-amber-400 mb-3 mx-auto" />
-                  <h3 className="text-3xl font-bold text-white mb-2" data-value="98">
-                    <span className="counter">0</span>%
-                  </h3>
-                  <p className="text-sm text-gray-300 font-medium">Satisfaction</p>
-                </div>
-                <div className="bg-gray-900/90 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center flex-1 max-w-[220px] border border-amber-500/20 hover:-translate-y-1">
-                  <Wrench className="h-10 w-10 text-amber-400 mb-3 mx-auto" />
-                  <h3 className="text-3xl font-bold text-white mb-2" data-value="30">
-                    <span className="counter">0</span>+
-                  </h3>
-                  <p className="text-sm text-gray-300 font-medium">Years</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="services" className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
-        <ScalePattern />
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Our Construction Services</h2>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-              Comprehensive construction solutions tailored to your needs
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { title: 'Residential Construction', desc: 'Custom homes, villas, and housing complexes built to your vision', icon: Building2 },
-              { title: 'Commercial Projects', desc: 'Offices, retail spaces, and business facilities designed for success', icon: Building2 },
-              { title: 'High-Rise Buildings', desc: 'Multi-story structures with advanced engineering and safety', icon: Building2 },
-              { title: 'Renovation & Remodeling', desc: 'Transform existing spaces with modern upgrades and repairs', icon: Wrench },
-              { title: 'Turnkey Solutions', desc: 'End-to-end project management from design to completion', icon: CheckCircle2 },
-              { title: 'Sustainable Building', desc: 'Eco-friendly construction with green materials and practices', icon: Award },
-            ].map((service, idx) => (
-              <div key={idx} className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-700 hover:border-amber-500/30 hover:shadow-xl transition-all group">
-                <service.icon className="h-12 w-12 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
-                <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
-                <p className="text-gray-400 leading-relaxed">{service.desc}</p>
+      {/* Company Overview & Achievements Section */}
+      <section id="company-overview" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
+        <div className="container mx-auto">
+          <h2 className="text-4xl font-bold text-amber-500 mb-8">Company Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+            <div>
+              <p className="text-gray-300 leading-relaxed mb-6">
+                Arif & Sons Construction Company has established itself as a leading force in the construction industry,
+                delivering excellence and innovation in every project we undertake. With years of experience and a
+                commitment to quality, we've built a reputation for reliability and expertise.
+              </p>
+              <p className="text-gray-300 leading-relaxed">
+                Our comprehensive range of services and dedication to client satisfaction has made us a trusted name
+                in both residential and commercial construction projects.
+              </p>
+            </div>
+            <div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-gray-800/50 p-6 rounded-lg">
+                  <h3 className="text-amber-500 text-xl font-bold mb-2">30+</h3>
+                  <p className="text-gray-300">Years of Experience</p>
+                </div>
+                <div className="bg-gray-800/50 p-6 rounded-lg">
+                  <h3 className="text-amber-500 text-xl font-bold mb-2">500+</h3>
+                  <p className="text-gray-300">Projects Completed</p>
+                </div>
+                <div className="bg-gray-800/50 p-6 rounded-lg">
+                  <h3 className="text-amber-500 text-xl font-bold mb-2">200+</h3>
+                  <p className="text-gray-300">Expert Team Members</p>
+                </div>
+                <div className="bg-gray-800/50 p-6 rounded-lg">
+                  <h3 className="text-amber-500 text-xl font-bold mb-2">98%</h3>
+                  <p className="text-gray-300">Client Satisfaction</p>
+                </div>
               </div>
-            ))}
+            </div>
+          </div>
+
+          {/* Achievements Stats with Animation */}
+          <h3 className="text-2xl font-bold text-amber-500 mb-8 text-center">Our Achievements</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="stats-section">
+            <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
+              <Award className="h-12 w-12 text-amber-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
+              <h3 className="text-4xl font-bold text-white mb-2" data-value="500">
+                <span className="counter">0</span>+
+              </h3>
+              <p className="text-gray-300 font-medium">Projects Completed</p>
+            </div>
+            <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
+              <Users className="h-12 w-12 text-amber-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
+              <h3 className="text-4xl font-bold text-white mb-2" data-value="200">
+                <span className="counter">0</span>+
+              </h3>
+              <p className="text-gray-300 font-medium">Expert Team Members</p>
+            </div>
+            <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
+              <CheckCircle2 className="h-12 w-12 text-amber-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
+              <h3 className="text-4xl font-bold text-white mb-2" data-value="98">
+                <span className="counter">0</span>%
+              </h3>
+              <p className="text-gray-300 font-medium">Client Satisfaction</p>
+            </div>
+            <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
+              <Wrench className="h-12 w-12 text-amber-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
+              <h3 className="text-4xl font-bold text-white mb-2" data-value="30">
+                <span className="counter">0</span>+
+              </h3>
+              <p className="text-gray-300 font-medium">Years of Experience</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Team Members Slider Section */}
+      <section id="our-team" className="py-20 bg-gray-900">
+        <div className="container mx-auto">
+          <h2 className="text-4xl font-bold text-amber-500 mb-12 text-center">Our Team</h2>
+          <TeamMarquee />
+        </div>
+      </section>
+
+      
+
+      {/* Vision & Mission Section */}
+      <section id="vision-mission" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+              <h2 className="text-4xl font-bold text-amber-500 mb-8">Our Vision</h2>
+              <p className="text-gray-300 leading-relaxed">
+                To be the most trusted and respected construction company, known for delivering innovative,
+                sustainable, and high-quality construction solutions that exceed client expectations and contribute
+                to the development of modern infrastructure.
+              </p>
+            </div>
+            <div>
+              <h2 className="text-4xl font-bold text-amber-500 mb-8">Our Mission</h2>
+              <p className="text-gray-300 leading-relaxed">
+                To deliver excellence in construction through innovation, quality workmanship, and unwavering
+                commitment to customer satisfaction, while maintaining the highest standards of safety and
+                sustainability in all our projects.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Infrastructure Section */}
+      <section id="infrastructure" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+        <div className="container mx-auto">
+          <h2 className="text-4xl font-bold text-amber-500 mb-12">Our Infrastructure</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-gray-800/50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-white mb-4">Equipment</h3>
+              <p className="text-gray-300">
+                State-of-the-art construction equipment and machinery to handle projects of any scale.
+              </p>
+            </div>
+            <div className="bg-gray-800/50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-white mb-4">Facilities</h3>
+              <p className="text-gray-300">
+                Modern offices and warehouses equipped with the latest technology and safety features.
+              </p>
+            </div>
+            <div className="bg-gray-800/50 p-6 rounded-lg">
+              <h3 className="text-xl font-bold text-white mb-4">Technology</h3>
+              <p className="text-gray-300">
+                Advanced software and tools for project planning, design, and management.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -331,7 +577,39 @@ function App() {
         </div>
       </section>
 
-      <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-amber-600 to-amber-700 text-white overflow-hidden">
+      {/* Contact Section */}
+      <section id="clients" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+        <div className="container mx-auto">
+          <h2 className="text-4xl font-bold text-amber-500 mb-12">Our Clients</h2>
+          <ClientsSlider />
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+        <div className="container mx-auto">
+          <h2 className="text-4xl font-bold text-amber-500 mb-12">Contact Us</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="bg-gray-800/50 p-6 rounded-lg">
+              <Phone className="w-8 h-8 text-amber-500 mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">Phone</h3>
+              <p className="text-gray-300">+92 325 8579677</p>
+            </div>
+            <div className="bg-gray-800/50 p-6 rounded-lg">
+              <Mail className="w-8 h-8 text-amber-500 mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">Email</h3>
+              <p className="text-gray-300">info@arifandsons.com</p>
+            </div>
+            <div className="bg-gray-800/50 p-6 rounded-lg">
+              <MapPin className="w-8 h-8 text-amber-500 mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">Address</h3>
+              <p className="text-gray-300">Lake City, Lahore, Pakistan</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="why-choose" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-amber-600 to-amber-700 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -506,7 +784,7 @@ function App() {
                   <span>Contact Directly</span>
                 </a>
                 <a 
-                  href="#projects" 
+                  to="/#projects" 
                   className="inline-flex items-center gap-2 bg-gray-800 text-white px-6 py-3 rounded-xl hover:bg-gray-700 transition-all font-semibold border border-amber-500/20 hover:border-amber-500/40"
                 >
                   <Building2 className="w-5 h-5" />
@@ -563,10 +841,10 @@ function App() {
             <div>
               <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
               <div className="space-y-3">
-                <a href="#services" className="block text-gray-400 hover:text-amber-400 transition-colors">Services</a>
-                <a href="#projects" className="block text-gray-400 hover:text-amber-400 transition-colors">Projects</a>
-                <a href="#about" className="block text-gray-400 hover:text-amber-400 transition-colors">About Us</a>
-                <a href="#contact" className="block text-gray-400 hover:text-amber-400 transition-colors">Contact</a>
+                <Link to="/services" className="block text-gray-400 hover:text-amber-400 transition-colors">Services</Link>
+                <a href="#my-projects" onClick={(e) => { e.preventDefault(); document.getElementById('my-projects')?.scrollIntoView({ behavior: 'smooth' }); }} className="block text-gray-400 hover:text-amber-400 transition-colors cursor-pointer">Projects</a>
+                <a href="#company-overview" onClick={(e) => { e.preventDefault(); document.getElementById('company-overview')?.scrollIntoView({ behavior: 'smooth' }); }} className="block text-gray-400 hover:text-amber-400 transition-colors cursor-pointer">About Us</a>
+                <a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }); }} className="block text-gray-400 hover:text-amber-400 transition-colors cursor-pointer">Contact</a>
               </div>
             </div>
 
@@ -638,6 +916,15 @@ function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/services" element={<Services />} />
+      <Route path="/" element={<HomePage />} />
+    </Routes>
   );
 }
 

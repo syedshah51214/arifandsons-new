@@ -1,0 +1,177 @@
+import { Building2, Phone, Mail, MapPin, Award, Users, Wrench, CheckCircle2, ArrowRight } from 'lucide-react';
+import backgroundImage from './assets/background image/1.jpg';
+import logo from './assets/logo.jpg';
+import { useEffect, useState } from 'react';
+import marla1 from './assets/projects/my-projects/5 MARLA 1.jpg';
+import marla2 from './assets/projects/my-projects/5 MARLA 2.jpg';
+import marla3 from './assets/projects/my-projects/5 MARLA 3.jpg';
+import marla4 from './assets/projects/my-projects/5 MARLA 4.jpg';
+import marla5 from './assets/projects/my-projects/5 MARLA 5.jpg';
+import marla6 from './assets/projects/my-projects/5 MARLA 6.jpg';
+import marla7 from './assets/projects/my-projects/5 MARLA 7.jpg';
+import marlaLakeCity1 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY.jpg';
+import marlaLakeCity2 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY 2.jpg';
+import marlaLakeCity3 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY 3.jpg';
+import marlaLakeCity4 from './assets/projects/my-projects/5 MARLA 2 LAKE CITY 4.jpg';
+import marlaUnderConstruction from './assets/projects/my-projects/5 MARLA UNDER CONSTRUCTION.jpg';
+
+function ScalePattern() {
+  return (
+    <svg className="absolute inset-0 w-full h-full opacity-5" preserveAspectRatio="none">
+      <defs>
+        <pattern id="scale" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <rect width="40" height="40" fill="none" stroke="#78350f" strokeWidth="1" />
+          <line x1="0" y1="20" x2="40" y2="20" stroke="#78350f" strokeWidth="0.5" />
+          <line x1="20" y1="0" x2="20" y2="40" stroke="#78350f" strokeWidth="0.5" />
+          <circle cx="20" cy="20" r="2" fill="#78350f" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#scale)" />
+    </svg>
+  );
+}
+
+function animateCounter() {
+  const counters = document.querySelectorAll('.counter');
+  counters.forEach(counter => {
+    const target = Number(counter.parentElement?.getAttribute('data-value') || 0);
+    let current = 0;
+    const increment = target / 100;
+    const updateCounter = () => {
+      if (current < target) {
+        current += increment;
+        counter.textContent = Math.floor(current).toString();
+        setTimeout(() => requestAnimationFrame(updateCounter), 20);
+      } else {
+        counter.textContent = target.toString();
+      }
+    };
+    updateCounter();
+  });
+}
+
+function App() {
+  const [showIntro, setShowIntro] = useState(true);
+
+  useEffect(() => {
+    // Handle intro animation
+    const timer = setTimeout(() => {
+      setShowIntro(false);
+    }, 2000); // Show intro for 2 seconds
+
+    animateCounter();
+    
+    const handleScroll = () => {
+      const header = document.getElementById('main-header');
+      if (header) {
+        if (window.scrollY > 50) {
+          header.classList.add('header-scrolled');
+        } else {
+          header.classList.remove('header-scrolled');
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-900">
+      {/* Intro Animation Section */}
+      <div 
+        className={`fixed inset-0 bg-gray-900 z-[100] flex items-center justify-center transition-opacity duration-1000 ${
+          showIntro ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="flex flex-col items-center gap-6 transform transition-transform duration-500">
+          <div className="w-48 h-48 bg-gray-800/95 rounded-xl border border-amber-500/20 shadow-lg overflow-hidden">
+            <img 
+              src={logo}
+              alt="Arif & Sons Logo" 
+              className="w-full h-full object-contain p-4"
+            />
+          </div>
+          <div className="text-center">
+            <h1 className="text-5xl font-bold whitespace-nowrap mb-2">
+              <span className="text-amber-400">Arif</span>
+              <span className="text-gray-200">&</span>
+              <span className="text-amber-400">Sons</span>
+            </h1>
+            <div className="flex items-center gap-2 justify-center">
+              <div className="h-0.5 w-6 bg-amber-500/50"></div>
+              <p className="text-lg text-gray-400 font-medium tracking-wider uppercase">Construction Co.</p>
+              <div className="h-0.5 w-6 bg-amber-500/50"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className={`transition-opacity duration-1000 ${showIntro ? 'opacity-0' : 'opacity-100'}`}>
+        {/* WhatsApp chat button */}
+        <a
+          href="https://wa.me/923258579677?text=Hi%20Arif%20%26%20Sons,%20I%20need%20a%20quote"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group fixed bottom-6 right-6 z-[90] flex items-center justify-center w-20 h-20 rounded-full bg-green-500 hover:bg-green-600 shadow-2xl transition-transform transform whatsapp-pulse whatsapp-bounce"
+          aria-label="Chat with us on WhatsApp"
+        >
+          {/* Tooltip label shown on hover */}
+          <span className="absolute -left-56 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-1.5 rounded-md shadow-lg opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-sm whitespace-nowrap">
+            Chat with us on WhatsApp
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-9 h-9 text-white" fill="currentColor">
+            <path d="M20.52 3.48A11.91 11.91 0 0 0 12 0C5.373 0 .01 5.373.01 12.002c0 2.115.55 4.188 1.596 6.01L0 24l6.225-1.59A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-11.998 0-3.203-1.25-6.21-3.48-8.522zM12 21.5c-1.8 0-3.54-.48-5.06-1.39l-.36-.22-3.69.94.98-3.59-.23-.37A9.467 9.467 0 0 1 2.5 12C2.5 6.21 6.71 2 12 2c5.29 0 9.5 4.21 9.5 10 0 5.79-4.21 9.5-9.5 9.5z" />
+            <path d="M17.5 13.5c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15s-.78.97-.96 1.17c-.18.2-.36.22-.66.07-.3-.15-1.26-.46-2.39-1.48-.88-.78-1.48-1.74-1.66-2.04-.18-.3-.02-.46.13-.61.13-.13.3-.36.45-.54.15-.18.2-.3.3-.5.1-.2 0-.37-.04-.52-.04-.15-.68-1.63-.93-2.24-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01s-.52.07-.8.37c-.28.3-1.08 1.04-1.08 2.54 0 1.5 1.11 2.95 1.26 3.15.15.2 2.18 3.34 5.28 4.68 3.1 1.34 3.1.89 3.66.83.56-.06 1.77-.72 2.02-1.41.25-.69.25-1.28.17-1.41-.08-.13-.28-.2-.58-.35z" fill="#fff" />
+          </svg>
+        </a>
+
+        <nav id="main-header" className="fixed top-0 w-full bg-gray-900/95 backdrop-blur-sm border-b border-amber-500/10 shadow-lg z-50 transition-all duration-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-24 transition-all duration-300 header-content">
+              <div className="flex items-center gap-12">
+                {/* Logo Section */}
+                <div className="group">
+                  <div className="flex items-center gap-3">
+                    <div className="relative flex items-center justify-center transform group-hover:scale-105 transition-all duration-300">
+                      <div id="header-logo-container" className="w-20 h-20 transition-all duration-300 logo-container flex items-center justify-center bg-gray-800/95 backdrop-blur-sm rounded-xl border border-amber-500/20 hover:border-amber-500/40 shadow-lg overflow-hidden">
+                        <img 
+                          src={logo}
+                          alt="Arif & Sons Logo" 
+                          className="w-full h-full object-contain p-2"
+                        />
+                      </div>
+                    </div>
+                    <div className="group-hover:translate-x-1 transition-transform duration-300">
+                      <h1 className="text-3xl font-bold whitespace-nowrap">
+                        <span className="text-amber-400">Arif</span>
+                        <span className="text-gray-200">&</span>
+                        <span className="text-amber-400">Sons</span>
+                      </h1>
+                      <div className="flex items-center gap-2">
+                        <div className="h-0.5 w-3 bg-amber-500/50"></div>
+                        <p className="text-sm text-gray-400 font-medium tracking-wider uppercase">Construction Co.</p>
+                        <div className="h-0.5 w-3 bg-amber-500/50"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Rest of the existing navigation, content, and footer */}
+                {/* Copy and paste the existing content here */}
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        {/* Copy and paste the rest of your existing content here */}
+      </div>
+    </div>
+  );
+}
+
+export default App;
