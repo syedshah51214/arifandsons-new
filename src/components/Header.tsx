@@ -154,8 +154,8 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
-      <div className={`md:hidden fixed inset-0 z-40 transform transition-transform duration-300 ${mobileOpen ? 'translate-y-0' : '-translate-y-full'}`}>
+  {/* Mobile Menu Overlay */}
+  <div className={`md:hidden fixed inset-0 z-60 transform transition-transform duration-300 ${mobileOpen ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="bg-gray-900/95 backdrop-blur-lg h-full w-full p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="text-2xl font-bold text-amber-500">Arif & Sons</div>
