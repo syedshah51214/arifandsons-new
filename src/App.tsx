@@ -67,6 +67,7 @@ function HomePage() {
   };
   // Hide the full-screen intro overlay during development to avoid a blocking blank screen
   const [showLogoOverlay, setShowLogoOverlay] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   // introVideo imported from `src/assets/abc.mp4`
   // If you replace the file, keep the same import path or update this import.
 
@@ -324,7 +325,7 @@ function HomePage() {
             </div>
             
             {/* Mobile Menu Button */}
-            <button className="md:hidden p-2 text-gray-400 hover:text-amber-400 transition-colors duration-300">
+            <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 text-gray-400 hover:text-amber-400 transition-colors duration-300" aria-label="Toggle menu">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -345,6 +346,30 @@ function HomePage() {
           </div>
         </div>
       </nav>
+
+      {/* Mobile Menu Overlay (in-page header) */}
+      <div className={`md:hidden fixed inset-0 z-[120] transform transition-transform duration-300 ${mobileOpen ? 'translate-y-0' : '-translate-y-full'}`}>
+        <div className="bg-gray-900/95 backdrop-blur-lg h-full w-full p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-2xl font-bold text-amber-500">Arif & Sons</div>
+            <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-2 text-gray-300 hover:text-amber-400">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <nav className="flex flex-col gap-4">
+            <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileOpen(false); }} className="text-lg text-gray-200">Home</a>
+            <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('company-overview'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Company Overview</button>
+            <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('our-team'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Our Team</button>
+            <button onClick={() => { setMobileOpen(false); window.location.href = '/services'; }} className="text-left text-lg text-gray-200">Services</button>
+            <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('my-projects'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Projects</button>
+            <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('clients'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Clients</button>
+            <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-amber-400 font-semibold">Contact Us</button>
+          </nav>
+        </div>
+      </div>
 
       {/* Hero Section with Background Image */}
       <section 
