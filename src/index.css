@@ -174,3 +174,32 @@ html {
   will-change: transform;
   animation: marquee 20s linear infinite;
 }
+
+/* Make all images responsive by default */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent horizontal overflow on small devices */
+html, body, #root {
+  overflow-x: hidden;
+}
+
+/* Small-screen tweaks for better spacing and font sizes */
+@media (max-width: 767px) {
+  .container, .max-w-6xl, .max-w-7xl, .max-w-5xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .text-5xl { font-size: 1.9rem; }
+  .text-4xl { font-size: 1.6rem; }
+  .text-3xl { font-size: 1.35rem; }
+
+  /* Reduce marquee gap on mobile */
+  .marquee { gap: 1rem; }
+}
+
+/* Import defensive responsive overrides */
+@import './styles/responsive-fixes.css';
