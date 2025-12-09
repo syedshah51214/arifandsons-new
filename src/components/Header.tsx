@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Phone, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import logo from '../assets/logo.jpg';
 
 export default function Header() {
   const location = useLocation();
@@ -60,7 +61,8 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-amber-500">Arif & Sons</span>
+            <img src={logo} alt="Arif & Sons logo" className="h-8 sm:h-10 w-auto object-contain" />
+            <span className="hidden sm:inline text-lg font-semibold text-amber-500">Arif & Sons</span>
           </Link>
           
           {/* Navigation Links */}
@@ -88,22 +90,44 @@ export default function Header() {
               </div>
             </div>
 
-            <div 
+            <div
               className="relative group"
               onMouseEnter={() => handleDropdownHover('services')}
               onMouseLeave={handleDropdownLeave}
             >
-              <Link to="/services" className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1">
+              <button className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1">
                 <span>Services</span>
                 <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
-              </Link>
-              <div className={`absolute top-full left-0 mt-2 w-48 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl transition-all duration-200 ${activeDropdown === 'services' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-                <Link to="/services" onClick={(e) => { handleScrollToSection(e, 'residential'); navigate('/services'); }} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Residential Construction</Link>
-                <Link to="/services" onClick={(e) => { handleScrollToSection(e, 'commercial'); navigate('/services'); }} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Commercial Projects</Link>
-                <Link to="/services" onClick={(e) => { handleScrollToSection(e, 'high-rise'); navigate('/services'); }} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">High-Rise Buildings</Link>
-                <Link to="/services" onClick={(e) => { handleScrollToSection(e, 'renovation'); navigate('/services'); }} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Renovation & Remodeling</Link>
-                <Link to="/services" onClick={(e) => { handleScrollToSection(e, 'turnkey'); navigate('/services'); }} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Turnkey Solutions</Link>
-                <Link to="/services" onClick={(e) => { handleScrollToSection(e, 'sustainable'); navigate('/services'); }} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Sustainable Building</Link>
+              </button>
+              <div className={`absolute top-full left-0 mt-2 w-56 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl transition-all duration-200 ${activeDropdown === 'services' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                {/* Service items that open WhatsApp with prefilled message */}
+                {[
+                  'Accessory building construction',
+                  'Basement waterproofing',
+                  'Bathroom remodelling',
+                  'Building construction',
+                  'Civil engineering consulting',
+                  'Concrete construction',
+                  'Construction management',
+                  'Construction site excavation',
+                  'Exterior structural repairs',
+                  'Foundation installation',
+                  'Home building',
+                  'Home renovations',
+                  'Floor fitting',
+                  'Interior structural repairs',
+                  'Exterior painting',
+                ].map((svc) => (
+                  <a
+                    key={svc}
+                    href={`https://wa.me/923258579677?text=${encodeURIComponent(`Hello Arif and Sons, I am interested in ${svc}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50"
+                  >
+                    {svc}
+                  </a>
+                ))}
               </div>
             </div>
 
@@ -113,12 +137,13 @@ export default function Header() {
               onMouseEnter={() => handleDropdownHover('projects')}
               onMouseLeave={handleDropdownLeave}
             >
-              <button className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1">
+              <Link to="/projects" className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1">
                 <span>Projects</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
+                <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
+              </Link>
               <div className={`absolute top-full left-0 mt-2 w-48 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl transition-all duration-200 ${activeDropdown === 'projects' ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-                <Link to="/" onClick={(e) => handleScrollToSection(e, 'my-projects')} className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">My Projects</Link>
+                <Link to="/featured" className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Featured Projects</Link>
+                <Link to="/projects" className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">All Projects</Link>
               </div>
             </div>
 
@@ -155,7 +180,7 @@ export default function Header() {
       </div>
 
   {/* Mobile Menu Overlay */}
-  <div className={`md:hidden fixed inset-0 z-60 transform transition-transform duration-300 ${mobileOpen ? 'translate-y-0' : '-translate-y-full'}`}>
+  <div className={`md:hidden fixed inset-0 z-60 transform transition-transform duration-300 ${mobileOpen ? 'translate-y-0 pointer-events-auto' : '-translate-y-full pointer-events-none'}`}>
         <div className="bg-gray-900/95 backdrop-blur-lg h-full w-full p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="text-2xl font-bold text-amber-500">Arif & Sons</div>
@@ -171,7 +196,8 @@ export default function Header() {
             <button onClick={(e) => { handleScrollToSection(e as any, 'company-overview'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Company Overview</button>
             <button onClick={(e) => { handleScrollToSection(e as any, 'our-team'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Our Team</button>
             <button onClick={() => { navigate('/services'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Services</button>
-            <button onClick={(e) => { handleScrollToSection(e as any, 'my-projects'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Projects</button>
+            <button onClick={() => { navigate('/featured'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Featured Projects</button>
+            <button onClick={() => { navigate('/projects'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">All Projects</button>
             <button onClick={(e) => { handleScrollToSection(e as any, 'clients'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Clients</button>
             <button onClick={(e) => { handleScrollToSection(e as any, 'contact'); setMobileOpen(false); }} className="text-left text-lg text-amber-400 font-semibold">Contact Us</button>
           </nav>

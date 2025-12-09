@@ -1,11 +1,8 @@
+@import './styles/responsive-fixes.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Cursor Styles */
-* {
-  cursor: pointer !important;
-}
 
 html {
   scroll-behavior: smooth;
@@ -14,17 +11,11 @@ html {
   text-size-adjust: 100%;
 }
 
-:root {
-  cursor: url('/br.png'), auto;
-}
-
+/* Custom Cursor - applied globally */
+body,
+html,
 * {
-  cursor: inherit;
-}
-
-/* Custom Cursor */
-.custom-cursor {
-  cursor: url('/br.png'), auto !important;
+  cursor: url('/src/assets/br.png') 5 5, auto !important;
 }
 
 /* Intro Animations */
@@ -168,11 +159,26 @@ html {
 }
 
 .marquee {
+  overflow: hidden;
+}
+
+.marquee-track {
   display: flex;
   gap: 2rem;
   align-items: center;
   will-change: transform;
-  animation: marquee 20s linear infinite;
+  animation: marquee 24s linear infinite;
+}
+
+/* Rotate animation for team avatars */
+@keyframes rotate360 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.rotate-360 {
+  animation: rotate360 8s linear infinite;
+  transform-origin: center center;
 }
 
 /* Make all images responsive by default */
@@ -201,5 +207,4 @@ html, body, #root {
   .marquee { gap: 1rem; }
 }
 
-/* Import defensive responsive overrides */
-@import './styles/responsive-fixes.css';
+/* defensive responsive overrides are imported at the top of this file */

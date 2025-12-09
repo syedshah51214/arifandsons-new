@@ -97,7 +97,7 @@ export default function AIchatbot() {
 
       {/* Chatbot Window */}
       {isOpen && (
-        <div className="group fixed bottom-24 left-6 z-[85] w-96 h-[500px] rounded-2xl shadow-2xl bg-white border border-gray-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="group fixed bottom-6 left-1/2 transform -translate-x-1/2 sm:left-6 sm:transform-none z-[85] w-11/12 sm:w-96 max-w-sm sm:max-w-none h-[60vh] sm:h-[500px] rounded-2xl shadow-2xl bg-white border border-gray-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
           {/* Header */}
           <div className="bg-gradient-to-r from-slate-900 to-slate-950 p-4 text-white">
             <div className="flex items-center gap-3">
