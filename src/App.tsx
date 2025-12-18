@@ -1,7 +1,7 @@
 import { Building2, Phone, Mail, MapPin, Award, Users, Wrench, CheckCircle2, ArrowRight } from 'lucide-react';
 import backgroundImage from './assets/background image/1.jpg';
 import { useEffect, useState, useRef } from 'react';
-import { Routes, Route, useNavigate, Link } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import TeamMarquee from './components/TeamMarquee';
 import ClientsSlider from './components/ClientsSlider';
 import Services from './pages/Services';
@@ -26,7 +26,7 @@ import CEO from './assets/CEO.jpg';
 
 function ScalePattern() {
   return (
-    <svg className="absolute inset-0 w-full h-full opacity-5" preserveAspectRatio="none">
+    <svg className="absolute inset-0 w-full h-full opacity-5" preserveAspectRatio="none" style={{ left: 0 }}>
       <defs>
         <pattern id="scale" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
           <rect width="40" height="40" fill="none" stroke="#78350f" strokeWidth="1" />
@@ -60,6 +60,7 @@ function animateCounter() {
 }
 
 function HomePage() {
+  const navigate = useNavigate();
   const handleScroll = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     event.preventDefault();
     const element = document.getElementById(id);
@@ -94,7 +95,7 @@ function HomePage() {
     animateCounter();
 
     const handleScroll = () => {
-      const header = document.getElementById('main-header');
+      // header element previously used for toggling header-scrolled; removed to keep header static
       const statsSection = document.getElementById('stats-section');
       const now = Date.now();
       const currentY = window.scrollY;
@@ -110,13 +111,14 @@ function HomePage() {
       }
 
       // header shrink/expand behavior unchanged
-      if (header) {
-        if (currentY > 50) {
-          header.classList.add('header-scrolled');
-        } else {
-          header.classList.remove('header-scrolled');
-        }
-      }
+      // Removed header-scrolled toggle to keep header static (no sliding/shrinking)
+      // if (header) {
+      //   if (currentY > 50) {
+      //     header.classList.add('header-scrolled');
+      //   } else {
+      //     header.classList.remove('header-scrolled');
+      //   }
+      // }
 
       // If the intro video hasn't finished, don't toggle the overlay on scroll
       if (!videoEnded) {
@@ -147,6 +149,70 @@ function HomePage() {
 
     window.addEventListener('scroll', handleScroll);
 
+    // Development-only: detect elements wider than viewport and highlight them
+    if (process.env.NODE_ENV !== 'production') {
+      const ensureStyle = () => {
+        if (!document.getElementById('overflow-offender-style')) {
+          const s = document.createElement('style');
+          s.id = 'overflow-offender-style';
+          s.innerHTML = `
+            .overflow-offender-dev{
+              outline: 3px solid rgba(255,0,0,0.95) !important;
+              box-shadow: inset 0 0 0 3px rgba(255,0,0,0.2), 0 0 12px rgba(255,0,0,0.15) !important;
+              z-index: 99999 !important;
+            }
+          `;
+          document.head.appendChild(s);
+        }
+      };
+
+      const detectOverflow = () => {
+        ensureStyle();
+        const w = window.innerWidth;
+        const offenders: HTMLElement[] = [];
+
+        const isClippedByOverflowHidden = (el: HTMLElement) => {
+          let parent: HTMLElement | null = el.parentElement;
+          while (parent) {
+            const style = window.getComputedStyle(parent);
+            if (/(hidden|clip)/.test(style.overflowX) || /(hidden|clip)/.test(style.overflow)) return true;
+            parent = parent.parentElement;
+          }
+          return false;
+        };
+
+        document.querySelectorAll('body *').forEach((el) => {
+          if (!(el instanceof HTMLElement)) return;
+          // If element is inside an ancestor that intentionally clips overflow, ignore it
+          if (isClippedByOverflowHidden(el)) return;
+          const rect = el.getBoundingClientRect();
+          if (rect.right > w + 1 || rect.left < -1) {
+            offenders.push(el);
+          }
+        });
+
+        // clear previous markings
+        document.querySelectorAll('.overflow-offender-dev').forEach((el) => el.classList.remove('overflow-offender-dev'));
+
+        if (offenders.length > 0) {
+          console.warn('Overflow offenders detected (right > viewport):');
+          offenders.forEach((el) => {
+            el.classList.add('overflow-offender-dev');
+            console.warn(`${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}${el.className ? '.' + el.className.split(' ').filter(Boolean).join('.') : ''}`, el.getBoundingClientRect());
+          });
+        }
+      };
+
+      // run once and on resize
+      detectOverflow();
+      window.addEventListener('resize', detectOverflow);
+
+      // cleanup
+      return () => {
+        window.removeEventListener('resize', detectOverflow);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
     // Ensure video playback is attempted programmatically (muted autoplay is allowed)
     setTimeout(() => {
       try {
@@ -173,7 +239,7 @@ function HomePage() {
   }, [showLogoOverlay]);
 
   return (
-    <div className={`min-h-screen bg-gray-900 ${styles.customCursor}`}>
+    <div className={`min-h-screen bg-gray-900 ${styles.customCursor} max-w-full overflow-x-hidden relative`}> 
       {/* Front-screen logo & company name overlay (visible until user scrolls) */}
       {/* Intro video overlay: plays `/src/assets/intro.mp4` if present. Click or press Skip to dismiss early. */}
       <div
@@ -219,18 +285,18 @@ function HomePage() {
         </button>
       </div>
       {/* WhatsApp chat button */}
-      <a
+        <a
         href="https://wa.me/923258579677?text=Hi%20Arif%20%26%20Sons,%20I%20need%20a%20quote"
         target="_blank"
         rel="noopener noreferrer"
-        className="group fixed bottom-6 right-6 z-[90] flex items-center justify-center w-20 h-20 rounded-full bg-green-500 hover:bg-green-600 shadow-2xl transition-transform transform whatsapp-pulse whatsapp-bounce"
+          className="group fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-[90] flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-500 hover:bg-green-600 shadow-2xl transition-transform transform whatsapp-pulse whatsapp-bounce"
         aria-label="Chat with us on WhatsApp"
       >
-        {/* Tooltip label shown on hover */}
-        <span className="absolute -left-56 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-1.5 rounded-md shadow-lg opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-sm whitespace-nowrap">
-          Chat with us on WhatsApp
-        </span>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-9 h-9 text-white" fill="currentColor">
+          {/* Tooltip label shown on hover - hidden on extra-small to avoid horizontal overflow */}
+          <span className="hidden sm:block absolute right-full mr-2 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-1.5 rounded-md shadow-lg opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-sm whitespace-nowrap">
+            Chat with us on WhatsApp
+          </span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-7 h-7 sm:w-9 sm:h-9 text-white" fill="currentColor">
           <path d="M20.52 3.48A11.91 11.91 0 0 0 12 0C5.373 0 .01 5.373.01 12.002c0 2.115.55 4.188 1.596 6.01L0 24l6.225-1.59A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-11.998 0-3.203-1.25-6.21-3.48-8.522zM12 21.5c-1.8 0-3.54-.48-5.06-1.39l-.36-.22-3.69.94.98-3.59-.23-.37A9.467 9.467 0 0 1 2.5 12C2.5 6.21 6.71 2 12 2c5.29 0 9.5 4.21 9.5 10 0 5.79-4.21 9.5-9.5 9.5z" />
           <path d="M17.5 13.5c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15s-.78.97-.96 1.17c-.18.2-.36.22-.66.07-.3-.15-1.26-.46-2.39-1.48-.88-.78-1.48-1.74-1.66-2.04-.18-.3-.02-.46.13-.61.13-.13.3-.36.45-.54.15-.18.2-.3.3-.5.1-.2 0-.37-.04-.52-.04-.15-.68-1.63-.93-2.24-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01s-.52.07-.8.37c-.28.3-1.08 1.04-1.08 2.54 0 1.5 1.11 2.95 1.26 3.15.15.2 2.18 3.34 5.28 4.68 3.1 1.34 3.1.89 3.66.83.56-.06 1.77-.72 2.02-1.41.25-.69.25-1.28.17-1.41-.08-.13-.28-.2-.58-.35z" fill="#fff" />
         </svg>
@@ -239,15 +305,15 @@ function HomePage() {
       {/* AI Chatbot */}
       <AIchatbot />
 
-      <nav id="main-header" className="fixed top-0 w-full bg-gray-900/95 backdrop-blur-sm border-b border-amber-500/10 shadow-lg z-50 transition-all duration-700">
+      <nav id="main-header" className="fixed top-0 w-full box-border bg-gray-900/95 backdrop-blur-sm border-b border-amber-500/10 shadow-lg z-50 overflow-x-hidden" style={{ left: 0, right: 0, width: '100%' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-24 transition-all duration-300 header-content">
+          <div className="flex justify-between items-center h-24">
             <div className="flex items-center gap-12">
               {/* Logo Section */}
               <div className="group">
                 <div className="flex items-center gap-3">
-                  <div className="relative flex items-center justify-center transform group-hover:scale-105 transition-all duration-300">
-                    <div id="header-logo-container" className="w-20 h-20 transition-all duration-300 logo-container flex items-center justify-center bg-gray-800/95 backdrop-blur-sm rounded-xl border border-amber-500/20 hover:border-amber-500/40 shadow-lg overflow-hidden">
+                  <div className="relative flex items-center justify-center">
+                    <div id="header-logo-container" className="w-20 h-20 logo-container flex items-center justify-center bg-gray-800/95 backdrop-blur-sm rounded-xl border border-amber-500/20 shadow-lg overflow-hidden">
                       <img 
                         src={logo} 
                         alt="Arif & Sons Logo" 
@@ -255,7 +321,7 @@ function HomePage() {
                       />
                     </div>
                   </div>
-                  <div className="group-hover:translate-x-1 transition-transform duration-300">
+                  <div>
                     <h1 className="text-3xl font-bold whitespace-nowrap">
                       <span className="text-amber-400">Arif</span>
                       <span className="text-gray-200">&</span>
@@ -279,7 +345,7 @@ function HomePage() {
 
                   {/* About Us Dropdown */}
                   <div className="relative group">
-                    <button className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1">
+                    <button className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1 group">
                       <span>About Us</span>
                       <svg className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -300,13 +366,13 @@ function HomePage() {
 
                   {/* Projects Dropdown */}
                   <div className="relative group">
-                    <button className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1">
+                    <button className="text-gray-300 hover:text-amber-400 transition-all duration-300 font-medium flex items-center gap-1 group">
                       <span>Projects</span>
                       <svg className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </button>
-                    <div className="absolute top-full left-0 mt-2 w-48 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    <div className="absolute top-full left-0 mt-2 w-48 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible">
                       <Link to="/featured" className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">Featured Projects</Link>
                       <Link to="/projects" className="block px-4 py-2 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50">All Projects</Link>
                     </div>
@@ -337,7 +403,7 @@ function HomePage() {
             <div className="hidden md:block">
               <a href="https://wa.me/923258579677?text=Hello%20Arif%20and%20Sons%2C%20I%20need%20a%20quote" target="_blank" rel="noopener noreferrer"
                 className="relative inline-flex items-center justify-center px-6 py-2.5 lg:px-8 lg:py-3 font-medium overflow-hidden group bg-amber-500 rounded-xl hover:bg-amber-600 transition-all duration-300">
-                <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-amber-700 rounded-full group-hover:w-56 group-hover:h-56"></span>
+                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 pointer-events-none transition-all duration-500 ease-out bg-amber-700 rounded-full group-hover:w-56 group-hover:h-56"></span>
                 <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
                 <span className="relative text-gray-900 group-hover:text-white transition-colors duration-300 flex items-center gap-2">
                   Get Quote
@@ -365,9 +431,9 @@ function HomePage() {
             <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileOpen(false); }} className="text-lg text-gray-200">Home</a>
             <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('company-overview'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Company Overview</button>
             <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('our-team'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Our Team</button>
-            <button onClick={() => { setMobileOpen(false); window.location.href = '/services'; }} className="text-left text-lg text-gray-200">Services</button>
-            <button onClick={() => { setMobileOpen(false); window.location.href = '/featured'; }} className="text-left text-lg text-gray-200">Featured Projects</button>
-            <button onClick={() => { setMobileOpen(false); window.location.href = '/projects'; }} className="text-left text-lg text-gray-200">All Projects</button>
+            <button onClick={() => { navigate('/services'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Services</button>
+            <button onClick={() => { navigate('/featured'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Featured Projects</button>
+            <button onClick={() => { navigate('/projects'); setMobileOpen(false); }} className="text-left text-lg text-gray-200">All Projects</button>
             <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('clients'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-gray-200">Clients</button>
             <button onClick={(e) => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); setMobileOpen(false); }} className="text-left text-lg text-amber-400 font-semibold">Contact Us</button>
           </nav>
@@ -385,21 +451,21 @@ function HomePage() {
         }}>
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900/60 via-gray-900/50 to-gray-900/40"></div>
         <ScalePattern />
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-6 lg:px-0">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 items-center">
             <div className="animate-fadeIn">
-              <div className="inline-flex items-center bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg mb-8 animate-slideUp">
+              <div className="inline-flex items-center bg-gradient-to-r from-amber-400 to-amber-500 text-gray-900 px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold shadow-lg mb-4 sm:mb-8 animate-slideUp">
                 <span className="mr-2">⚡</span>
                 <span>Building Excellence Since 1995</span>
               </div>
-              <h2 className="text-5xl lg:text-7xl font-bold text-white mb-8 leading-tight animate-slideUp">
+              <h2 className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 sm:mb-8 leading-tight animate-slideUp">
                 Building the Future with <span className="text-amber-400">Precision & Trust</span>
               </h2>
-              <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl animate-slideUp delay-100">
+              <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-10 leading-relaxed max-w-2xl animate-slideUp delay-100">
                 From residential dreams to commercial landmarks, we deliver turnkey construction solutions with uncompromising quality and safety standards.
               </p>
             </div>
-            <div className="relative">
+            <div className="relative hidden lg:block">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
             </div>
           </div>
@@ -407,12 +473,12 @@ function HomePage() {
       </section>
 
       {/* Company Overview & Achievements Section */}
-      <section id="company-overview" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
+      <section id="company-overview" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
         <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-amber-500 mb-8">Company Overview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+          <h2 className="text-2xl sm:text-4xl font-bold text-amber-500 mb-6 sm:mb-8">Company Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 mb-12 sm:mb-16">
             <div>
-              <p className="text-gray-300 leading-relaxed mb-6">
+              <p className="text-gray-300 leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">
                 Arif & Sons Construction Company has established itself as a leading force in the construction industry,
                 delivering excellence and innovation in every project we undertake. With years of experience and a
                 commitment to quality, we've built a reputation for reliability and expertise.
@@ -445,65 +511,63 @@ function HomePage() {
           </div>
 
           {/* Achievements Stats with Animation */}
-          <h3 className="text-2xl font-bold text-amber-500 mb-8 text-center">Our Achievements</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="stats-section">
-            <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
-              <Award className="h-12 w-12 text-amber-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
-              <h3 className="text-4xl font-bold text-white mb-2" data-value="500">
+          <h3 className="text-xl sm:text-2xl font-bold text-amber-500 mb-6 sm:mb-8 text-center">Our Achievements</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8" id="stats-section">
+            <div className="bg-gray-800/50 p-4 sm:p-8 rounded-lg sm:rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
+              <Award className="h-8 sm:h-12 w-8 sm:w-12 text-amber-400 mb-2 sm:mb-4 mx-auto group-hover:scale-110 transition-transform" />
+              <h3 className="text-2xl sm:text-4xl font-bold text-white mb-1 sm:mb-2" data-value="500">
                 <span className="counter">0</span>+
               </h3>
-              <p className="text-gray-300 font-medium">Projects Completed</p>
+              <p className="text-sm sm:text-base text-gray-300 font-medium">Projects Completed</p>
             </div>
-            <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
-              <Users className="h-12 w-12 text-amber-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
-              <h3 className="text-4xl font-bold text-white mb-2" data-value="200">
+            <div className="bg-gray-800/50 p-4 sm:p-8 rounded-lg sm:rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
+              <Users className="h-8 sm:h-12 w-8 sm:w-12 text-amber-400 mb-2 sm:mb-4 mx-auto group-hover:scale-110 transition-transform" />
+              <h3 className="text-2xl sm:text-4xl font-bold text-white mb-1 sm:mb-2" data-value="200">
                 <span className="counter">0</span>+
               </h3>
-              <p className="text-gray-300 font-medium">Expert Team Members</p>
+              <p className="text-sm sm:text-base text-gray-300 font-medium">Expert Team Members</p>
             </div>
-            <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
-              <CheckCircle2 className="h-12 w-12 text-amber-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
-              <h3 className="text-4xl font-bold text-white mb-2" data-value="98">
+            <div className="bg-gray-800/50 p-4 sm:p-8 rounded-lg sm:rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
+              <CheckCircle2 className="h-8 sm:h-12 w-8 sm:w-12 text-amber-400 mb-2 sm:mb-4 mx-auto group-hover:scale-110 transition-transform" />
+              <h3 className="text-2xl sm:text-4xl font-bold text-white mb-1 sm:mb-2" data-value="98">
                 <span className="counter">0</span>%
               </h3>
-              <p className="text-gray-300 font-medium">Client Satisfaction</p>
+              <p className="text-sm sm:text-base text-gray-300 font-medium">Client Satisfaction</p>
             </div>
-            <div className="bg-gray-800/50 p-8 rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
-              <Wrench className="h-12 w-12 text-amber-400 mb-4 mx-auto group-hover:scale-110 transition-transform" />
-              <h3 className="text-4xl font-bold text-white mb-2" data-value="30">
+            <div className="bg-gray-800/50 p-4 sm:p-8 rounded-lg sm:rounded-xl shadow-lg hover:shadow-amber-500/10 transition-all duration-300 text-center border border-amber-500/20 hover:-translate-y-1 group cursor-pointer">
+              <Wrench className="h-8 sm:h-12 w-8 sm:w-12 text-amber-400 mb-2 sm:mb-4 mx-auto group-hover:scale-110 transition-transform" />
+              <h3 className="text-2xl sm:text-4xl font-bold text-white mb-1 sm:mb-2" data-value="30">
                 <span className="counter">0</span>+
               </h3>
-              <p className="text-gray-300 font-medium">Years of Experience</p>
+              <p className="text-sm sm:text-base text-gray-300 font-medium">Years of Experience</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Team Members Slider Section */}
-      <section id="our-team" className="py-20 bg-gray-900">
-        <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-amber-500 mb-12 text-center">Our Team</h2>
+      <section id="our-team" className="py-12 sm:py-20 bg-gray-900">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-0">
+          <h2 className="text-2xl sm:text-4xl font-bold text-amber-500 mb-8 sm:mb-12 text-center">Our Team</h2>
           <TeamMarquee />
         </div>
       </section>
 
-      
-
       {/* Vision & Mission Section */}
-      <section id="vision-mission" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
+      <section id="vision-mission" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12">
             <div>
-              <h2 className="text-4xl font-bold text-amber-500 mb-8">Our Vision</h2>
-              <p className="text-gray-300 leading-relaxed">
+              <h2 className="text-2xl sm:text-4xl font-bold text-amber-500 mb-4 sm:mb-8">Our Vision</h2>
+              <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
                 To be the most trusted and respected construction company, known for delivering innovative,
                 sustainable, and high-quality construction solutions that exceed client expectations and contribute
                 to the development of modern infrastructure.
               </p>
             </div>
             <div>
-              <h2 className="text-4xl font-bold text-amber-500 mb-8">Our Mission</h2>
-              <p className="text-gray-300 leading-relaxed">
+              <h2 className="text-2xl sm:text-4xl font-bold text-amber-500 mb-4 sm:mb-8">Our Mission</h2>
+              <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
                 To deliver excellence in construction through innovation, quality workmanship, and unwavering
                 commitment to customer satisfaction, while maintaining the highest standards of safety and
                 sustainability in all our projects.
@@ -514,25 +578,25 @@ function HomePage() {
       </section>
 
       {/* Infrastructure Section */}
-      <section id="infrastructure" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+      <section id="infrastructure" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
         <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-amber-500 mb-12">Our Infrastructure</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gray-800/50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-white mb-4">Equipment</h3>
-              <p className="text-gray-300">
+          <h2 className="text-2xl sm:text-4xl font-bold text-amber-500 mb-6 sm:mb-12">Our Infrastructure</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
+            <div className="bg-gray-800/50 p-4 sm:p-6 rounded-lg">
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Equipment</h3>
+              <p className="text-gray-300 text-sm sm:text-base">
                 State-of-the-art construction equipment and machinery to handle projects of any scale.
               </p>
             </div>
-            <div className="bg-gray-800/50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-white mb-4">Facilities</h3>
-              <p className="text-gray-300">
+            <div className="bg-gray-800/50 p-4 sm:p-6 rounded-lg">
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Facilities</h3>
+              <p className="text-gray-300 text-sm sm:text-base">
                 Modern offices and warehouses equipped with the latest technology and safety features.
               </p>
             </div>
-            <div className="bg-gray-800/50 p-6 rounded-lg">
-              <h3 className="text-xl font-bold text-white mb-4">Technology</h3>
-              <p className="text-gray-300">
+            <div className="bg-gray-800/50 p-4 sm:p-6 rounded-lg">
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4">Technology</h3>
+              <p className="text-gray-300 text-sm sm:text-base">
                 Advanced software and tools for project planning, design, and management.
               </p>
             </div>
@@ -540,30 +604,30 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="projects" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
+      <section id="projects" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 overflow-hidden">
         <ScalePattern />
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">Our Projects</h2>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto">Browse our latest residential and commercial projects.</p>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">Our Projects</h2>
+            <p className="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto px-2">Browse our latest residential and commercial projects.</p>
           </div>
 
           {/* Featured Project */}
-          <div className="mb-16 bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-amber-500/30 transition-all">
-            <h3 className="text-2xl font-bold text-white mb-6">Featured Lake City Project</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="relative group aspect-video rounded-xl overflow-hidden bg-gray-900">
+          <div className="mb-12 sm:mb-16 bg-gray-800/50 backdrop-blur-sm p-4 sm:p-8 rounded-lg sm:rounded-2xl border border-gray-700 hover:border-amber-500/30 transition-all">
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Featured Lake City Project</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+              <div className="relative group aspect-video rounded-lg sm:rounded-xl overflow-hidden bg-gray-900">
                 <img src={marlaLakeCity1} alt="Lake City Project" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60"></div>
-                <div className="absolute bottom-4 left-4">
-                  <span className="inline-flex items-center bg-amber-500/90 backdrop-blur-sm text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">Lake City</span>
+                <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
+                  <span className="inline-flex items-center bg-amber-500/90 backdrop-blur-sm text-gray-900 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">Lake City</span>
                 </div>
               </div>
-              <div className="relative group aspect-video rounded-xl overflow-hidden bg-gray-900">
+              <div className="relative group aspect-video rounded-lg sm:rounded-xl overflow-hidden bg-gray-900">
                 <img src={marlaLakeCity2} alt="Lake City Project" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60"></div>
               </div>
-              <div className="relative group aspect-video rounded-xl overflow-hidden bg-gray-900">
+              <div className="relative group aspect-video rounded-lg sm:rounded-xl overflow-hidden bg-gray-900">
                 <img src={marlaLakeCity3} alt="Lake City Project" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60"></div>
               </div>
@@ -571,7 +635,7 @@ function HomePage() {
           </div>
 
           {/* Other 5 Marla Projects */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {[
               { img: marla1, title: 'Project 01', category: 'Residential' },
               { img: marla2, title: 'Project 02', category: 'Residential' },
@@ -582,7 +646,7 @@ function HomePage() {
               { img: marla7, title: 'Project 07', category: 'Residential' },
               { img: marlaUnderConstruction, title: 'Project 08 (Under Construction)', category: 'In Progress' },
             ].map((project, idx) => (
-              <div key={idx} className="group bg-gray-800 rounded-xl border border-gray-700 shadow-sm overflow-hidden hover:shadow-xl transition-all hover:border-amber-500/30">
+              <div key={idx} className="group bg-gray-800 rounded-lg sm:rounded-xl border border-gray-700 shadow-sm overflow-hidden hover:shadow-xl transition-all hover:border-amber-500/30">
                 <div className="aspect-video relative overflow-hidden bg-gray-900">
                   <img 
                     src={project.img} 
@@ -590,13 +654,13 @@ function HomePage() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60"></div>
-                  <div className="absolute bottom-4 left-4">
-                    <span className="inline-flex items-center bg-amber-500/90 backdrop-blur-sm text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">{project.category}</span>
+                  <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
+                    <span className="inline-flex items-center bg-amber-500/90 backdrop-blur-sm text-gray-900 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">{project.category}</span>
                   </div>
                 </div>
-                <div className="p-4">
-                  <h4 className="font-bold text-lg mb-2 text-white group-hover:text-amber-400 transition-colors">{project.title}</h4>
-                  <a href="#" className="inline-flex items-center gap-2 text-amber-500 font-medium hover:text-amber-400 transition-colors">
+                <div className="p-3 sm:p-4">
+                  <h4 className="font-bold text-sm sm:text-lg mb-2 text-white group-hover:text-amber-400 transition-colors">{project.title}</h4>
+                  <a href="#" className="inline-flex items-center gap-2 text-amber-500 font-medium hover:text-amber-400 transition-colors text-sm">
                     View Details
                     <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                   </a>
@@ -608,51 +672,51 @@ function HomePage() {
       </section>
 
       {/* Contact Section */}
-      <section id="clients" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+      <section id="clients" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
         <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-amber-500 mb-12">Our Clients</h2>
+          <h2 className="text-2xl sm:text-4xl font-bold text-amber-500 mb-6 sm:mb-12">Our Clients</h2>
           <ClientsSlider />
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
+      <section id="contact" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
         <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-amber-500 mb-12">Contact Us</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-gray-800/50 p-6 rounded-lg">
-              <Phone className="w-8 h-8 text-amber-500 mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">Phone</h3>
-              <p className="text-gray-300">+92 325 8579677</p>
+          <h2 className="text-2xl sm:text-4xl font-bold text-amber-500 mb-6 sm:mb-12">Contact Us</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+            <div className="bg-gray-800/50 p-4 sm:p-6 rounded-lg">
+              <Phone className="w-6 sm:w-8 h-6 sm:h-8 text-amber-500 mb-3 sm:mb-4" />
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Phone</h3>
+              <p className="text-gray-300 text-sm sm:text-base">+92 325 8579677</p>
             </div>
-            <div className="bg-gray-800/50 p-6 rounded-lg">
-              <Mail className="w-8 h-8 text-amber-500 mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">Email</h3>
-              <p className="text-gray-300">info@arifandsons.com</p>
+            <div className="bg-gray-800/50 p-4 sm:p-6 rounded-lg">
+              <Mail className="w-6 sm:w-8 h-6 sm:h-8 text-amber-500 mb-3 sm:mb-4" />
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Email</h3>
+              <p className="text-gray-300 text-sm sm:text-base">info@arifandsons.com</p>
             </div>
-            <div className="bg-gray-800/50 p-6 rounded-lg">
-              <MapPin className="w-8 h-8 text-amber-500 mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">Address</h3>
-              <p className="text-gray-300">Lake City, Lahore, Pakistan</p>
+            <div className="bg-gray-800/50 p-4 sm:p-6 rounded-lg">
+              <MapPin className="w-6 sm:w-8 h-6 sm:h-8 text-amber-500 mb-3 sm:mb-4" />
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-2">Address</h3>
+              <p className="text-gray-300 text-sm sm:text-base">Lake City, Lahore, Pakistan</p>
             </div>
           </div>
 
           {/* Social Media Links */}
-          <div className="mt-12 text-center">
-            <h3 className="text-2xl font-bold text-white mb-6">Follow Us On Social Media</h3>
-            <div className="flex justify-center gap-6">
-              <a href="https://facebook.com/arifandsonsconstruction" target="_blank" rel="noopener noreferrer" className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full transition-all transform hover:scale-110" aria-label="Facebook">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <div className="mt-8 sm:mt-12 text-center">
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Follow Us On Social Media</h3>
+            <div className="flex justify-center gap-3 sm:gap-6 flex-wrap">
+              <a href="https://facebook.com/arifandsonsconstruction" target="_blank" rel="noopener noreferrer" className="bg-blue-600 hover:bg-blue-700 text-white p-3 sm:p-4 rounded-full transition-all transform hover:scale-110" aria-label="Facebook">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
               </a>
-              <a href="https://www.instagram.com/engineersuleiman05/" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white p-4 rounded-full transition-all transform hover:scale-110" aria-label="Instagram">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <a href="https://www.instagram.com/engineersuleiman05/" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white p-3 sm:p-4 rounded-full transition-all transform hover:scale-110" aria-label="Instagram">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.299.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.299 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.299-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.299-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"/>
                 </svg>
               </a>
-              <a href="https://www.tiktok.com/@engineersalman05" target="_blank" rel="noopener noreferrer" className="bg-gray-800 hover:bg-gray-700 text-white p-4 rounded-full transition-all transform hover:scale-110" aria-label="TikTok">
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <a href="https://www.tiktok.com/@engineersalman05" target="_blank" rel="noopener noreferrer" className="bg-gray-800 hover:bg-gray-700 text-white p-3 sm:p-4 rounded-full transition-all transform hover:scale-110" aria-label="TikTok">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 11-5.77-1.39 2.93 2.93 0 011.59-2.68V9.01a6.35 6.35 0 00-1.25.12 6.72 6.72 0 00-5.94 6.67c0 3.71 3.01 6.72 6.72 6.72 3.71 0 6.72-3.01 6.72-6.72v-2.04a6.76 6.76 0 003.77 1.13V11.2c-.49-.1-.96-.27-1.41-.51z"/>
                 </svg>
               </a>
@@ -661,15 +725,15 @@ function HomePage() {
         </div>
       </section>
 
-      <section id="why-choose" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-amber-600 to-amber-700 text-white overflow-hidden">
+      <section id="why-choose" className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-amber-600 to-amber-700 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-6">Why Choose Arif & Sons?</h2>
-              <p className="text-xl text-amber-50 mb-8 leading-relaxed">
+              <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6">Why Choose Arif & Sons?</h2>
+              <p className="text-base sm:text-xl text-amber-50 mb-6 sm:mb-8 leading-relaxed">
                 With over three decades of experience, we've built our reputation on delivering exceptional quality, maintaining strict safety standards, and ensuring sustainable construction practices.
               </p>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {[
                   'Certified engineers and skilled workforce',
                   'On-time project delivery guaranteed',
@@ -678,8 +742,8 @@ function HomePage() {
                   'Post-construction support and warranty',
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <CheckCircle2 className="h-6 w-6 text-amber-200 flex-shrink-0 mt-0.5" />
-                    <span className="text-lg text-amber-50">{item}</span>
+                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-amber-200 flex-shrink-0 mt-0.5" />
+                    <span className="text-base sm:text-lg text-amber-50">{item}</span>
                   </div>
                 ))}
               </div>
@@ -737,7 +801,7 @@ function HomePage() {
                       </svg>
                     </a>
                     <a 
-                      href="https://www.facebook.com/share/1CViwbx5Vb/" 
+                      href="https://www.facebook.com/arifandsonsconstruction" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="w-10 h-10 rounded-full bg-gray-800/80 border border-amber-500/20 flex items-center justify-center text-amber-500 hover:bg-amber-500 hover:text-gray-900 transition-all"
@@ -757,13 +821,26 @@ function HomePage() {
                       </svg>
                     </a>
                   </div>
-                  <a 
-                    href="tel:+923258579677" 
-                    className="inline-flex items-center gap-2 bg-gray-800/80 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-amber-500/20 hover:border-amber-500/40 transition-colors"
-                  >
-                    <Phone className="w-4 h-4 text-amber-500" />
-                    <span>+92 325 8579677</span>
-                  </a>
+                  <div className="flex flex-col gap-3">
+                    <a 
+                      href="tel:+923122696789" 
+                      className="inline-flex items-center gap-2 bg-amber-500 text-gray-900 px-4 py-2 rounded-lg hover:bg-amber-400 transition-colors font-semibold"
+                    >
+                      <Phone className="w-4 h-4" />
+                      <span>+92 312 2696789</span>
+                    </a>
+                    <a 
+                      href="https://wa.me/923258579677" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-gray-800/80 backdrop-blur-sm text-white px-4 py-2 rounded-lg border border-amber-500/20 hover:border-amber-500/40 transition-colors"
+                    >
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/>
+                      </svg>
+                      <span>+92 325 8579677</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

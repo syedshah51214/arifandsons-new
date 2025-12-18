@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Building2, MessageCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -8,7 +7,6 @@ import AIchatbot from '../components/AIchatbot';
 import logo from '../assets/logo.jpg';
 
 export default function Services() {
-  const navigate = useNavigate();
   // static service list requested by user
   const serviceItems = [
     'Accessory building construction',
@@ -161,12 +159,6 @@ export default function Services() {
         <section aria-labelledby="why-choose" className="mb-8">
           <h2 id="why-choose" className="text-2xl font-semibold text-amber-400 mb-4">Why Choose Arif & Sons</h2>
           <p className="text-gray-300">Experienced construction company in Lahore offering licensed civil engineers, quality workmanship, and full project management from excavation to finishing. We specialise in home renovations, bathroom remodelling, foundation installations, and commercial construction.</p>
-        </section>
-
-        <section aria-labelledby="contact-cta" className="mb-12">
-          <h2 id="contact-cta" className="text-2xl font-semibold text-amber-400 mb-4">Get A Custom Quote</h2>
-          <p className="text-gray-300 mb-4">Prefer to talk? Contact us directly or use WhatsApp to request a tailored quote for your project in Lahore.</p>
-          <a href="#contact" className="inline-block px-6 py-3 bg-amber-500 text-slate-900 rounded-md font-semibold" onClick={(e) => { e.preventDefault(); const el = document.getElementById('contact'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} aria-label="Scroll to contact section">Contact Us</a>
         </section>
 
         <nav aria-label="Internal links" className="mt-6">

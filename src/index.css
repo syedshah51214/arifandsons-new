@@ -1,3 +1,49 @@
+* { box-sizing: border-box; }
+html, body, #root { overflow-x: hidden !important; width: 100%; position: relative; max-width: 100vw; }
+
+/* Ensure header/nav are constrained to viewport and cannot overflow horizontally */
+header, #main-header {
+  box-sizing: border-box;
+  max-width: 100vw;
+  width: 100vw;
+  left: 0;
+  right: 0;
+  overflow-x: clip; /* clip hides overflow without showing a scrollbar */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Make sure header children cannot extend beyond the viewport */
+header *, #main-header * {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Defensive rule for large fixed shadows/borders that may visually extend past edges */
+header, #main-header, .container, .max-w-7xl {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Extra containment for sections and common layout containers to prevent narrow viewport rounding/overflow issues */
+section, nav, main, .container, .max-w-7xl, .max-w-6xl, .max-w-5xl {
+  max-width: 100vw;
+  overflow-x: clip;
+  position: relative;
+}
+
+/* Ensure marquee/animated horizontal elements don't cause scrollbars; they are designed to translate within their container */
+.marquee-animated, .marquee-track {
+  max-width: none; /* allow marquee to animate inside overflow-hidden parent */
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Defensive: clip any pseudo-element that might extend outside */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
 @import './styles/responsive-fixes.css';
 
 @tailwind base;
@@ -88,14 +134,7 @@ html,
   }
 }
 
-/* Header Scroll Animation */
-.header-scrolled .header-content {
-  @apply h-20;
-}
-
-.header-scrolled .logo-container {
-  @apply w-16 h-16;
-}
+/* Header Scroll Animation removed - header will remain static */
 
 /* Counter Animation */
 .animate-number {

@@ -17,21 +17,69 @@ img, picture, video, svg {
 * {
   word-wrap: break-word;
   -webkit-font-smoothing: antialiased;
+  -webkit-touch-callout: none;
 }
 
-/* Reduce heavy fixed attachments and large hero typography on small screens */
-@media (max-width: 767px) {
-  /* Force background-attachment to scroll on small devices (improves performance & avoids overflow) */
+/* Extra Small Devices (max-width: 480px) */
+@media (max-width: 480px) {
+  body { font-size: 14px; }
+  h1 { font-size: 1.75rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  h3 { font-size: 1.25rem !important; }
+  h4 { font-size: 1.1rem !important; }
+  
+  /* Header adjustments */
+  #main-header { padding: 0.5rem 0 !important; }
+  #main-header .logo-container { width: 2.5rem !important; height: 2.5rem !important; }
+  #main-header .header-content { height: 56px !important; }
+  
+  /* Navigation */
+  .hidden.md\\:flex { display: flex !important; }
+  
+  /* Sections */
+  section { padding: 2rem 1rem !important; }
+  .py-20 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+  .py-12 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+  .px-8 { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .px-6 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+  
+  /* Grid layouts */
+  .grid { gap: 1rem !important; }
+  .gap-6 { gap: 1rem !important; }
+  .gap-8 { gap: 1rem !important; }
+  
+  /* Text sizing */
+  .text-4xl { font-size: 1.875rem !important; }
+  .text-5xl { font-size: 2rem !important; }
+  .text-6xl { font-size: 2.25rem !important; }
+  .text-7xl { font-size: 2.5rem !important; }
+  
+  /* Buttons */
+  button, a.inline-flex { padding: 0.5rem 1rem !important; font-size: 0.875rem !important; }
+  
+  /* Cards */
+  .rounded-2xl { border-radius: 0.75rem !important; }
+  .p-8 { padding: 1rem !important; }
+  
+  /* Form elements */
+  input, textarea, select { padding: 0.5rem 0.75rem !important; font-size: 16px !important; }
+}
+
+/* Small Devices (481px - 768px) */
+@media (max-width: 768px) {
+  /* Force background-attachment to scroll on small devices */
   section { background-attachment: scroll !important; background-position: center !important; }
 
   /* Hero spacing and typography */
+  .min-h-screen { min-height: 100vh !important; }
   .min-h-screen.pt-32 {
-    padding-top: 4.5rem !important; /* smaller top padding on phones */
+    padding-top: 4.5rem !important;
     padding-bottom: 3rem !important;
   }
-  .min-h-screen h2.text-5xl, .min-h-screen h2.text-7xl {
-    font-size: 2rem !important;
-    line-height: 1.05 !important;
+  .min-h-screen h2.text-5xl, 
+  .min-h-screen h2.text-7xl {
+    font-size: 2.25rem !important;
+    line-height: 1.2 !important;
   }
   .min-h-screen p {
     font-size: 1rem !important;
@@ -41,9 +89,9 @@ img, picture, video, svg {
   /* Header adjustments */
   #main-header .logo-container { width: 3rem !important; height: 3rem !important; }
   #main-header .header-content { height: 64px !important; }
+  #main-header nav { width: 100% !important; }
 
   /* Chat widget and fixed-width panels */
-  /* Tailwind utility classes like w-96 and h-[500px] are overridden here for small screens */
   [class*="w-96"] {
     width: 90vw !important;
     max-width: 360px !important;
@@ -53,32 +101,86 @@ img, picture, video, svg {
     max-height: 70vh !important;
   }
 
-  /* Reduce large paddings used site-wide */
+  /* Reduce large paddings */
   .py-20 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
   .px-8 { padding-left: 1rem !important; padding-right: 1rem !important; }
 
-  /* Buttons and CTAs should have comfortable touch targets but not overflow */
+  /* Grid layouts */
+  .grid-cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .lg\\:grid-cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  
+  /* Buttons and CTAs */
   .inline-flex.items-center.px-6 { padding-left: 1rem !important; padding-right: 1rem !important; }
 
   /* Marquee adjustments */
-  .marquee { animation-duration: 30s; gap: 1rem; }
-  .marquee > * { min-width: 60px; }
+  .marquee { animation-duration: 20s !important; gap: 1rem !important; }
+  .marquee > * { min-width: 60px !important; }
+  
+  /* Video sections */
+  video { width: 100% !important; height: auto !important; }
+  
+  /* Modal/Lightbox */
+  .fixed.inset-0 { padding: 1rem !important; }
 }
 
-/* Larger screens: ensure background-attachment isn't forcing overflow */
+/* Medium Devices (769px - 1024px) */
 @media (max-width: 1024px) {
-  .bg-fixed, section[style*="background-attachment"] { background-attachment: scroll !important; }
+  .bg-fixed, section[style*="background-attachment"] { 
+    background-attachment: scroll !important; 
+  }
+  
+  .text-6xl { font-size: 2.25rem !important; }
+  .text-7xl { font-size: 2.5rem !important; }
+  
+  .grid-cols-4 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+
+/* Large Devices (1025px+) */
+@media (min-width: 1025px) {
+  /* Optimize for larger screens */
+  .container { max-width: 1280px !important; }
 }
 
 /* Utility helper to make non-responsive components behave */
-.responsive-media { max-width: 100% !important; height: auto !important; display: block !important; }
+.responsive-media { 
+  max-width: 100% !important; 
+  height: auto !important; 
+  display: block !important; 
+}
 
-/* Final safety: clip any accidental overflow from specific components */
-.no-overflow-x { overflow-x: hidden !important; }
+/* Final safety: clip any accidental overflow */
+.no-overflow-x { 
+  overflow-x: hidden !important; 
+}
+
+/* Fix overflow on containers */
+.container, .max-w-7xl, .max-w-6xl {
+  width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+/* Touch-friendly spacing for mobile */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+}
+
+/* Aspect ratio fix for all screens */
+.aspect-video {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Typography fixes for all screens */
+.text-3xl { font-size: clamp(1.5rem, 5vw, 1.875rem) !important; }
+.text-4xl { font-size: clamp(1.875rem, 6vw, 2.25rem) !important; }
+.text-5xl { font-size: clamp(2rem, 7vw, 3rem) !important; }
 
 /* Notes:
- - This file adds defensive overrides for small screens. Prefer adjusting Tailwind classes directly
-   in components for cleaner long-term maintenance.
- - Avoid using global cursor rules (index.css sets custom cursor for *). That can interfere with
-   UI and cause layout oddities on mobile; consider removing or scoping the cursor rule.
+ - This file adds defensive overrides for all screen sizes
+ - Adjust Tailwind classes directly in components for cleaner maintenance
+ - Cursor rules moved to specific elements to avoid mobile interference
 */
