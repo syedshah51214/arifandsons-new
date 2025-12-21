@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
+import { HelmetProvider } from './lib/helmetFallback';
 import App from './App.tsx';
 import './index.css';
 
@@ -13,9 +14,11 @@ try {
   
   createRoot(root).render(
     <StrictMode>
-      <HashRouter>
-        <App />
-      </HashRouter>
+      <HelmetProvider>
+        <HashRouter>
+          <App />
+        </HashRouter>
+      </HelmetProvider>
     </StrictMode>
   );
 } catch (err) {

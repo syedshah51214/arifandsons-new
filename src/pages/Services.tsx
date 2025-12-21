@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { Building2, MessageCircle } from 'lucide-react';
+import { Helmet } from '../lib/helmetFallback';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -26,71 +26,34 @@ export default function Services() {
     'Exterior painting',
   ];
 
-  useEffect(() => {
-    // SEO: title and meta
-    const title = 'Construction Services Lahore — Arif & Sons';
-    document.title = title;
+  // SEO metadata (server-safe via react-helmet-async)
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'ConstructionCompany',
+    name: 'Arif & Sons',
+    url: typeof window !== 'undefined' ? window.location.origin : 'https://arifandsons.com',
+    telephone: '+923258579677',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Lahore',
+      addressCountry: 'PK',
+    },
+    areaServed: 'Lahore',
+    description: 'Construction services in Lahore including renovation, building construction, foundations and civil engineering consulting.',
+  };
 
-    const setMeta = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"]`);
-      if (!el) {
-        el = document.createElement('meta');
-        el.setAttribute('name', name);
-        document.head.appendChild(el);
-      }
-      el.setAttribute('content', content);
-    };
-
-    // description (approx 150-160 chars)
-    setMeta('description', 'Arif & Sons delivers expert construction services in Lahore: home renovation, building construction, bathroom remodeling, concrete foundation installation, and civil engineering consulting.');
-    setMeta('keywords', 'construction services Lahore, home renovation Lahore, building construction, bathroom remodeling, concrete foundation installation, civil engineering consulting');
-
-    // canonical
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
-    canonical.href = `${window.location.origin}/services`;
-
-    // JSON-LD LocalBusiness (ConstructionCompany)
-    const ld = {
-      '@context': 'https://schema.org',
-      '@type': 'ConstructionCompany',
-      'name': 'Arif & Sons',
-      'url': window.location.origin,
-      'telephone': '+923258579677',
-      'address': {
-        '@type': 'PostalAddress',
-        'addressLocality': 'Lahore',
-        'addressCountry': 'PK'
-      },
-      'areaServed': 'Lahore',
-      'description': 'Construction services in Lahore including renovation, building construction, foundations and civil engineering consulting.'
-    };
-
-    const scriptId = 'ld-json-services';
-    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
-    if (!script) {
-      script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.id = scriptId;
-      document.head.appendChild(script);
-    }
-    script.text = JSON.stringify(ld);
-
-    return () => {
-      // cleanup: do not remove title, but remove injected script if present
-      const s = document.getElementById(scriptId);
-      if (s) s.remove();
-    };
-  }, []);
 
   return (
     <div className="services-page min-h-screen bg-gray-900 text-white overflow-x-hidden relative">
       <Header />
       <AIchatbot />
+      <Helmet>
+        <title>Construction Services Lahore — Arif & Sons</title>
+        <meta name="description" content="Arif & Sons delivers expert construction services in Lahore: home renovation, building construction, bathroom remodeling, concrete foundation installation, and civil engineering consulting." />
+        <meta name="keywords" content="construction services Lahore, home renovation Lahore, building construction, bathroom remodeling, concrete foundation installation, civil engineering consulting, turnkey construction Lahore, residential construction Lahore" />
+        <link rel="canonical" href={`${typeof window !== 'undefined' ? window.location.origin : ''}/services`} />
+        <script type="application/ld+json">{JSON.stringify(ld)}</script>
+      </Helmet>
 
       {/* Decorative blurred logo background */}
       <div aria-hidden className="absolute inset-0 -z-10 flex items-center justify-center">

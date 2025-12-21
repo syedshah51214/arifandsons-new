@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import { Helmet } from '../lib/helmetFallback';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import AIchatbot from '../components/AIchatbot';
@@ -19,21 +20,8 @@ export default function Projects() {
   const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    // SEO setup
-    document.title = 'Our Projects — Arif & Sons';
-    
-    const setMeta = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"]`);
-      if (!el) {
-        el = document.createElement('meta');
-        el.setAttribute('name', name);
-        document.head.appendChild(el);
-      }
-      el.setAttribute('content', content);
-    };
-
-    setMeta('description', 'View our completed construction projects in Lahore. Residential, commercial, renovation projects and more.');
-    setMeta('keywords', 'construction projects Lahore, completed projects, residential construction, commercial projects');
+    // SEO handled by react-helmet-async in the page render (allows server-safe metadata)
+    // Description and keywords are provided via Helmet below.
 
     // Load images from Services folder using dynamic imports
     const loadProjects = async () => {
@@ -66,7 +54,7 @@ export default function Projects() {
           return {
             id: `${idx}`,
             src: module.default,
-            alt: `${category} - ${filename}`,
+            alt: `${category} - ${filename} — construction project in Lahore`,
             category: category,
           };
         }
@@ -130,6 +118,12 @@ export default function Projects() {
     <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
       <Header />
       <AIchatbot />
+      <Helmet>
+        <title>Our Projects — Arif & Sons</title>
+        <meta name="description" content="View our completed construction projects in Lahore. Residential, commercial, renovation projects and more." />
+        <meta name="keywords" content="construction projects Lahore, completed projects, residential construction, commercial projects, renovation Lahore" />
+        <link rel="canonical" href={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects`} />
+      </Helmet>
 
       {/* Header Section */}
       <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">

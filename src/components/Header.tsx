@@ -109,7 +109,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-24">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Arif & Sons logo" className="h-8 sm:h-10 w-auto object-contain" />
+            <img src={logo} alt="Arif & Sons - Construction company Lahore" className="h-8 sm:h-10 w-auto object-contain" />
             <span className="hidden sm:inline text-lg font-semibold text-amber-500">Arif & Sons</span>
           </Link>
           
@@ -126,7 +126,7 @@ export default function Header() {
                 <span>About Us</span>
                 <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
               </button>
-              <div className="absolute top-full left-0 mt-1 min-w-[200px] w-56 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div className="absolute top-full left-0 mt-0 min-w-[200px] w-56 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto transition-all duration-150">
                 <Link to="/" onClick={(e) => handleScrollToSection(e, 'company-overview')} className="block px-5 py-3 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50 whitespace-normal">Company Overview</Link>
                 <Link to="/" onClick={(e) => handleScrollToSection(e, 'our-team')} className="block px-5 py-3 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50 whitespace-normal">Our Team</Link>
                 <Link to="/" onClick={(e) => handleScrollToSection(e, 'vision-mission')} className="block px-5 py-3 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50 whitespace-normal">Vision & Mission</Link>
@@ -139,7 +139,7 @@ export default function Header() {
                 <span>Services</span>
                 <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
               </button>
-              <div className="absolute top-full left-0 mt-1 min-w-[220px] w-64 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div className="absolute top-full left-0 mt-0 min-w-[220px] w-64 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto transition-all duration-150">
                 {/* Service items that open WhatsApp with prefilled message */}
                 {[
                   'Accessory building construction',
@@ -177,7 +177,7 @@ export default function Header() {
                 <span>Projects</span>
                 <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
               </Link>
-              <div className="absolute top-full left-0 mt-1 min-w-[200px] w-48 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div className="absolute top-full left-0 mt-0 min-w-[200px] w-48 bg-gray-900/95 backdrop-blur-lg border border-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto transition-all duration-150">
                 <Link to="/featured" className="block px-5 py-3 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50 whitespace-normal">Featured Projects</Link>
                 <Link to="/projects" className="block px-5 py-3 text-gray-300 hover:text-amber-400 hover:bg-gray-800/50 whitespace-normal">All Projects</Link>
               </div>

@@ -57,12 +57,7 @@ html {
   text-size-adjust: 100%;
 }
 
-/* Custom Cursor - applied globally */
-body,
-html,
-* {
-  cursor: url('/src/assets/br.png') 5 5, auto !important;
-}
+
 
 /* Intro Animations */
 .intro-section {
@@ -245,5 +240,36 @@ html, body, #root {
   /* Reduce marquee gap on mobile */
   .marquee { gap: 1rem; }
 }
+
+/* Hero typography and layout improvements */
+.hero-section {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.hero-section h2 {
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.hero-section p {
+  color: rgba(226, 232, 240, 1); /* text-gray-300 */
+}
+
+/* Primary CTA styling tuned for clarity */
+.cta-primary {
+  padding-left: 1.25rem; /* 20px */
+  padding-right: 1.25rem;
+  padding-top: 0.75rem; /* 12px */
+  padding-bottom: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .hero-section {
+    padding-top: 6rem; /* reduce top spacing on large screens */
+    padding-bottom: 4rem;
+  }
+}
+
 
 /* defensive responsive overrides are imported at the top of this file */

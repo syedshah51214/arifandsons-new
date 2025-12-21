@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import { Helmet } from '../lib/helmetFallback';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import AIchatbot from '../components/AIchatbot';
@@ -17,22 +18,6 @@ export default function Featured() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // SEO setup
-    document.title = 'Featured Projects — Arif & Sons';
-    
-    const setMeta = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"]`);
-      if (!el) {
-        el = document.createElement('meta');
-        el.setAttribute('name', name);
-        document.head.appendChild(el);
-      }
-      el.setAttribute('content', content);
-    };
-
-    setMeta('description', 'Featured construction projects in Lahore. Premium residential and commercial projects completed by Arif & Sons.');
-    setMeta('keywords', 'featured projects Lahore, premium construction, residential projects, commercial construction');
-
     // Load featured images (5 MARLA projects)
     const loadFeaturedProjects = async () => {
       const imageModules = import.meta.glob<{ default: string }>(
@@ -49,7 +34,7 @@ export default function Featured() {
           return {
             id: `${idx}`,
             src: module.default,
-            alt: `Featured - ${cleanFilename}`,
+            alt: `Featured - ${cleanFilename} — residential construction project in Lahore`,
             category: 'Featured',
           };
         })
@@ -104,6 +89,12 @@ export default function Featured() {
     <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
       <Header />
       <AIchatbot />
+      <Helmet>
+        <title>Featured Projects — Arif & Sons</title>
+        <meta name="description" content="Featured construction projects in Lahore. Premium residential and commercial projects completed by Arif & Sons." />
+        <meta name="keywords" content="featured projects Lahore, premium construction, residential projects, commercial construction, 5 marla projects Lahore" />
+        <link rel="canonical" href={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects/featured`} />
+      </Helmet>
 
       {/* Header Section */}
       <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
