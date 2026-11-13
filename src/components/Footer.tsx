@@ -1,96 +1,72 @@
-import { useNavigate } from 'react-router-dom';
-import { Phone, Mail, MapPin } from 'lucide-react';
-import logo from '../assets/logo.jpg';
+import { Link } from 'react-router-dom';
 import localInfo from '../config/localInfo';
+import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SOCIALS } from '../lib/contact';
+import { useGoToSection } from '../lib/useGoToSection';
 
 export default function Footer() {
-  const navigate = useNavigate();
+  const goTo = useGoToSection();
+  const link = (id: string, label: string) => (
+    <li>
+      <button type="button" className="linklike" onClick={() => goTo(id)}>
+        {label}
+      </button>
+    </li>
+  );
 
-  const handleScrollToSection = (sectionId: string) => {
-    const location = window.location.hash;
-    const isHome = location === '#/' || location === '';
-
-    if (!isHome) {
-      navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const headerOffset = 100;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
-      }, 100);
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        const headerOffset = 100;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-      }
-    }
-  };
   return (
-    <footer className="bg-gray-900 border-t border-gray-800">
-      <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Company Info */}
+    <footer className="site-footer">
+      <div className="wrap">
+        <p className="site-footer__big" aria-hidden="true">
+          Arif and Sons
+        </p>
+        <div className="site-footer__grid">
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <img src={logo} alt="Arif & Sons - Construction company Lahore" className="h-10 w-auto object-contain" />
-              <h3 className="text-xl font-bold text-white">Arif & Sons</h3>
-            </div>
-            <p className="text-gray-400 mb-4">Building Excellence Since 1995</p>
-            <div className="space-y-2">
-              <a href={`tel:${localInfo.telephone}`} className="flex items-center gap-2 text-gray-400 hover:text-amber-400 transition-colors">
-                <Phone className="w-4 h-4" />
-                <span>{localInfo.telephone}</span>
-              </a>
-              <a href={`mailto:${localInfo.email}`} className="flex items-center gap-2 text-gray-400 hover:text-amber-400 transition-colors">
-                <Mail className="w-4 h-4" />
-                <span>{localInfo.email}</span>
-              </a>
-              <div className="flex items-start gap-2 text-gray-400">
-                <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
-                <div>
-                  <div>{localInfo.address.streetAddress}</div>
-                  <div>{localInfo.address.addressLocality}, {localInfo.address.addressRegion} {localInfo.address.postalCode}</div>
-                </div>
-              </div>
-
-              {/* Reviews */}
-              <div className="mt-4">
-                <a href={localInfo.googleMapsSearchUrl} target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 bg-amber-500 text-slate-900 rounded-lg font-semibold hover:bg-amber-400 transition-all">Leave a review on Google</a>
-              </div>
-            </div>
+            <h3>Arif and Sons Construction Co.</h3>
+            <p style={{ margin: 0, maxWidth: '34ch' }}>
+              Houses, plazas and interiors across Lahore. Building since 1995.
+            </p>
           </div>
-
-          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
-            <div className="space-y-2">
-              <button onClick={() => navigate('/services')} className="block text-gray-400 hover:text-amber-400 transition-colors text-left">Services</button>
-              <button onClick={() => handleScrollToSection('my-projects')} className="block text-gray-400 hover:text-amber-400 transition-colors text-left">Projects</button>
-              <button onClick={() => handleScrollToSection('company-overview')} className="block text-gray-400 hover:text-amber-400 transition-colors text-left">About Us</button>
-            </div>
+            <h3>Company</h3>
+            <ul>
+              {link('about', 'About')}
+              {link('process', 'How we work')}
+              {link('team', 'Team')}
+              {link('clients', 'Where we build')}
+            </ul>
           </div>
-
-          {/* Services */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Our Services</h3>
-            <div className="space-y-2">
-              <button onClick={() => navigate('/services#residential')} className="block text-gray-400 hover:text-amber-400 transition-colors text-left">Residential Construction</button>
-              <button onClick={() => navigate('/services#commercial')} className="block text-gray-400 hover:text-amber-400 transition-colors text-left">Commercial Projects</button>
-              <button onClick={() => navigate('/services#renovation')} className="block text-gray-400 hover:text-amber-400 transition-colors text-left">Renovation</button>
-            </div>
+            <h3>Work</h3>
+            <ul>
+              {link('services', 'Services')}
+              <li><Link to="/services">Full service list</Link></li>
+              <li><Link to="/featured">Featured homes</Link></li>
+              <li><Link to="/projects">All project photos</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Contact</h3>
+            <ul>
+              <li><a href={`tel:${PHONE_TEL}`}>{PHONE_DISPLAY}</a></li>
+              <li><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
+              <li>Lake City, Lahore, Pakistan</li>
+              <li>
+                <a href={localInfo.googleMapsSearchUrl} target="_blank" rel="noopener noreferrer">
+                  Find us on Google Maps
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
-        
-        {/* Copyright */}
-        <div className="pt-8 mt-8 border-t border-gray-800 text-center">
-          <p className="text-sm text-gray-500">&copy; {new Date().getFullYear()} Arif & Sons Construction Co. All rights reserved.</p>
+        <div className="site-footer__legal">
+          <span>© {new Date().getFullYear()} Arif and Sons Construction Co. All rights reserved.</span>
+          <span style={{ display: 'flex', gap: '1.25rem' }}>
+            {SOCIALS.map((s) => (
+              <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer">
+                {s.name}
+              </a>
+            ))}
+          </span>
         </div>
       </div>
     </footer>

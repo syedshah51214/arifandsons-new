@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { HelmetProvider } from './lib/helmetFallback';
 import App from './App.tsx';
+import '@fontsource/big-shoulders-display/latin-700';
+import '@fontsource/big-shoulders-display/latin-800';
+import '@fontsource/big-shoulders-display/latin-900';
+import '@fontsource-variable/hanken-grotesk/wght';
 import './index.css';
 
 try {

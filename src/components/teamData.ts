@@ -28,8 +28,8 @@ const teamMembers: TeamMember[] = [
   { image: hijabShah, name: 'Hijab Shah', role: 'Director' },
   { image: founderArif, name: 'Arif Hussain', role: 'Founder' },
   { image: syedMasood, name: 'Syed Masood Rizvi', role: 'Chief Manager' },
-  { image: cheifEngineer, name: 'Chief Engineer', role: '' },
-  { image: abdulRehman, name: 'Abdul Rehman', role: 'Outteam Architech' },
+  { image: cheifEngineer, name: 'Chief Engineer', role: 'Engineering' },
+  { image: abdulRehman, name: 'Abdul Rehman', role: 'Architect' },
 ];
 
 export default teamMembers;
