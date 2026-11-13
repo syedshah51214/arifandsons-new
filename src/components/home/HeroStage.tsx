@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowDown } from 'lucide-react';
 import introVideo from '../../assets/abc.mp4';
+import lastFrame from '../../assets/brand/intro-last.webp';
+import poster from '../../assets/brand/intro-poster.webp';
 import mark from '../../assets/brand/logo-mark.webp';
 import { QUOTE_LINK } from '../../lib/contact';
 import { scrollToSection } from '../../lib/useGoToSection';
@@ -22,6 +24,8 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const [phase, setPhase] = useState<'video' | 'logo'>(introPlayed || skipIntro || reduced ? 'logo' : 'video');
+  // If we start on the logo there is no need to download the video at all.
+  const [useVideo] = useState(phase === 'video');
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
 
@@ -34,15 +38,6 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (phaseRef.current === 'logo') {
-      // Park the video on its last frame as a still backdrop.
-      const park = () => {
-        if (Number.isFinite(v.duration)) v.currentTime = Math.max(0, v.duration - 0.05);
-      };
-      if (v.readyState >= 1) park();
-      else v.addEventListener('loadedmetadata', park, { once: true });
-      return;
-    }
     v.play().catch(showLogo); // autoplay blocked: go straight to the logo
     const safety = window.setTimeout(showLogo, 12000);
     return () => window.clearTimeout(safety);
@@ -85,8 +80,10 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
   return (
     <section ref={heroRef} className={`hero${phase === 'logo' ? ' is-logo' : ''}`} aria-label="Arif and Sons Construction Co.">
       <div className="hero__pin">
-        <video
+        {!useVideo && <img className="hero__video" src={lastFrame} alt="" />}
+        {useVideo && <video
           ref={videoRef}
+          poster={poster}
           className="hero__video"
           src={introVideo}
           muted
@@ -100,13 +97,13 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
             const v = e.currentTarget;
             if (v.duration) heroRef.current?.style.setProperty('--video', (v.currentTime / v.duration).toFixed(3));
           }}
-        />
+        />}
         <div className="hero__shade" />
         <div className="hero__foot" />
 
         <div className="hero__lockup">
           <div className="hero__mark">
-            <img src={mark} alt="" width={900} height={617} />
+            <img src={mark} alt="" width={640} height={439} />
           </div>
           <h1 className="hero__name">
             <span className="hero__word hero__word--a"><span>Arif</span></span>

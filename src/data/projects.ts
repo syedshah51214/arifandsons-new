@@ -3,7 +3,10 @@
 export type ProjectKind = 'Residential' | 'Commercial' | 'Turnkey' | 'Finishing and renovation';
 
 export interface ProjectPhoto {
+  /** Full-size photo, for the lightbox. */
   src: string;
+  /** Small copy, for grids. Made by scripts/optimize_images.py. */
+  thumb: string;
   title: string;
   location: string;
   kind: ProjectKind;
@@ -29,6 +32,15 @@ const modules = import.meta.glob('../assets/Services/**/*.{jpg,jpeg,png,webp}', 
   import: 'default',
 }) as Record<string, string>;
 
+const thumbModules = import.meta.glob('../assets/thumbs/Services/**/*.webp', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
+
+const thumbFor = (path: string) =>
+  thumbModules[path.replace('/assets/Services/', '/assets/thumbs/Services/').replace(/\.[^.]+$/, '.webp')] ?? modules[path];
+
 // Turnkey photos carry their own description in the file name, e.g. "10 Marla Bahria TOWN.jpg"
 const titleCase = (s: string) =>
   s.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase()).replace(/\bDha\b/, 'DHA');
@@ -53,7 +65,7 @@ export const photos: ProjectPhoto[] = Object.keys(modules)
     const file = parts[parts.length - 1];
     const meta = folders[folder] ?? { title: folder, location: 'Lahore', kind: 'Residential' as ProjectKind };
     const label = folder === 'Tunkey Solution' ? turnkeyLabel(file) : meta;
-    return { src: modules[path], title: label.title, location: label.location, kind: meta.kind, folder };
+    return { src: modules[path], thumb: thumbFor(path), title: label.title, location: label.location, kind: meta.kind, folder };
   });
 
 export const kinds: ProjectKind[] = ['Turnkey', 'Residential', 'Commercial', 'Finishing and renovation'];
@@ -70,3 +82,6 @@ export const urlByFile = (needle: string) => {
   const k = findByFile(needle);
   return k ? modules[k] : photos[0]?.src ?? '';
 };
+
+/** Full-size URL -> small copy, for pages that only know the full URL. */
+export const thumbOf: Record<string, string> = Object.fromEntries(photos.map((p) => [p.src, p.thumb]));

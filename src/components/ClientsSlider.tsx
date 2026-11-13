@@ -1,14 +1,14 @@
 // Import all client logos from the Our Clients folder
-import alKabirTown from '../assets/Our Clients/Al Kabir Town.jpeg';
-import bahriaTown from '../assets/Our Clients/Bahria Town.png';
-import dhaLahore from '../assets/Our Clients/DHA LAHORE.jpeg';
-import etihadTown from '../assets/Our Clients/Etihad Town.png';
-import islampura from '../assets/Our Clients/Islampura.jpeg';
-import khayabanEAmin from '../assets/Our Clients/khayaban e Amin.jpeg';
-import lakeCity from '../assets/Our Clients/Lake City.png';
-import paragonCity from '../assets/Our Clients/paragon city.png';
-import parkAvenue from '../assets/Our Clients/Park Avenue.png';
-import punjabSociety from '../assets/Our Clients/punjab society.jpeg';
+import alKabirTown from '../assets/Our Clients/Al Kabir Town.webp';
+import bahriaTown from '../assets/Our Clients/Bahria Town.webp';
+import dhaLahore from '../assets/Our Clients/DHA LAHORE.webp';
+import etihadTown from '../assets/Our Clients/Etihad Town.webp';
+import islampura from '../assets/Our Clients/Islampura.webp';
+import khayabanEAmin from '../assets/Our Clients/khayaban e Amin.webp';
+import lakeCity from '../assets/Our Clients/Lake City.webp';
+import paragonCity from '../assets/Our Clients/paragon city.webp';
+import parkAvenue from '../assets/Our Clients/Park Avenue.webp';
+import punjabSociety from '../assets/Our Clients/punjab society.webp';
 
 type ClientItem = { name: string; logo: string };
 

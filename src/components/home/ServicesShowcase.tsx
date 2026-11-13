@@ -49,7 +49,13 @@ const services = [
 ];
 
 export default function ServicesShowcase() {
-  const [active, setActive] = useState(0);
+  const [active, setActiveRaw] = useState(0);
+  // Photos load only once their service has been picked.
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set([0]));
+  const setActive = (i: number) => {
+    setActiveRaw(i);
+    setLoaded((prev) => (prev.has(i) ? prev : new Set(prev).add(i)));
+  };
   return (
     <>
       <div className="services">
@@ -72,9 +78,11 @@ export default function ServicesShowcase() {
           ))}
         </ul>
         <figure className="service-preview" style={{ margin: 0 }}>
-          {services.map((s, i) => (
-            <img key={s.name} src={s.img} alt={i === active ? s.caption : ''} className={i === active ? 'is-active' : ''} loading="lazy" />
-          ))}
+          {services.map((s, i) =>
+            loaded.has(i) ? (
+              <img key={s.name} src={s.img} alt={i === active ? s.caption : ''} className={i === active ? 'is-active' : ''} loading="lazy" decoding="async" />
+            ) : null
+          )}
           <figcaption>{services[active].caption}</figcaption>
         </figure>
       </div>

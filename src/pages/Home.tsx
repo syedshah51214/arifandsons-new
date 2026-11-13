@@ -12,7 +12,7 @@ import QuotePlanner from '../components/home/QuotePlanner';
 import ServicesShowcase from '../components/home/ServicesShowcase';
 import SiteBoard from '../components/home/SiteBoard';
 import teamMembers from '../components/teamData';
-import CEO from '../assets/CEO.jpg';
+import CEO from '../assets/CEO.webp';
 import localInfo from '../config/localInfo';
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, QUOTE_LINK, SOCIALS } from '../lib/contact';
 import { scrollToSection } from '../lib/useGoToSection';
@@ -232,7 +232,7 @@ export default function Home() {
             <ul className="team">
               {teamMembers.map((m) => (
                 <li key={m.name}>
-                  <img src={m.image} alt={m.name} loading="lazy" />
+                  <img src={m.image} alt={m.name} loading="lazy" decoding="async" width={420} height={420} />
                   <h3>{m.name}</h3>
                   <p>{m.role}</p>
                 </li>

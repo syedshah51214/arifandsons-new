@@ -6,17 +6,17 @@ export interface TeamMember {
 }
 
 // Import real team photos from assets/Team
-import abdulRehman from '../assets/Team/Abdul Rehman Outteam Architech.jpg';
-import cheifEngineer from '../assets/Team/Cheif Engineer.jpg';
-import founderArif from '../assets/Team/Founder ARIF HUSSAIN.jpg';
-import hijabShah from '../assets/Team/Hijab Shah Director.jpg';
-import hinaShah from '../assets/Team/Hina Shah HR Manager.jpg';
-import iftikharKazmi from '../assets/Team/Iftikhar Kazmi Site Manager.jpg';
-import iqtidarT from '../assets/Team/Iqtidar Tirmazi Legal Advisor.jpg';
-import nomanAhmed from '../assets/Team/Noman Ahmed Social Media Manager.jpg';
-import measumShah from '../assets/Team/S Measum Shah Project Manager.jpg';
-import sulemanArif from '../assets/Team/Suleman Arif CEO.jpg';
-import syedMasood from '../assets/Team/Syed Masood Rizvi Cheif Manager.jpg';
+import abdulRehman from '../assets/Team/Abdul Rehman Outteam Architech.webp';
+import cheifEngineer from '../assets/Team/Cheif Engineer.webp';
+import founderArif from '../assets/Team/Founder ARIF HUSSAIN.webp';
+import hijabShah from '../assets/Team/Hijab Shah Director.webp';
+import hinaShah from '../assets/Team/Hina Shah HR Manager.webp';
+import iftikharKazmi from '../assets/Team/Iftikhar Kazmi Site Manager.webp';
+import iqtidarT from '../assets/Team/Iqtidar Tirmazi Legal Advisor.webp';
+import nomanAhmed from '../assets/Team/Noman Ahmed Social Media Manager.webp';
+import measumShah from '../assets/Team/S Measum Shah Project Manager.webp';
+import sulemanArif from '../assets/Team/Suleman Arif CEO.webp';
+import syedMasood from '../assets/Team/Syed Masood Rizvi Cheif Manager.webp';
 
 const teamMembers: TeamMember[] = [
   { image: sulemanArif, name: 'Suleman Arif', role: 'CEO' },

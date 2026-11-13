@@ -4,7 +4,12 @@ import { Link } from 'react-router-dom';
 import { kinds, photos, type ProjectKind, type ProjectPhoto } from '../../data/projects';
 
 export type GalleryFilter = 'All' | ProjectKind;
-const SHOWN = 11;
+const SHOWN = 10;
+
+// Start fetching the full photo as soon as the pointer is over its tile.
+const preload = (src: string) => {
+  new Image().src = src;
+};
 
 // For "All", take photos from each project folder in turn so one large folder does not fill the grid.
 function mixed(): ProjectPhoto[] {
@@ -71,8 +76,8 @@ export default function ProjectGallery({ filter, onFilter }: Props) {
 
       <div className="gallery">
         {shown.map((p, i) => (
-          <button key={p.src} type="button" className="gallery__item" onClick={() => setOpen(i)} aria-label={`Open photo: ${p.title}, ${p.location}`}>
-            <img src={p.src} alt="" loading="lazy" />
+          <button key={p.src} type="button" className="gallery__item" onClick={() => setOpen(i)} onMouseEnter={() => preload(p.src)} aria-label={`Open photo: ${p.title}, ${p.location}`}>
+            <img src={p.thumb} alt="" loading="lazy" decoding="async" />
             <span>
               {p.title}
               <small>{p.location}</small>

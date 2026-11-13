@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { Helmet } from '../lib/helmetFallback';
 import Header from '../components/Header';
+import { thumbOf } from '../data/projects';
 import Footer from '../components/Footer';
 import AIchatbot from '../components/AIchatbot';
 
@@ -190,7 +191,8 @@ export default function Projects() {
                   className="group relative overflow-hidden rounded-lg cursor-pointer aspect-video bg-gray-800 border border-amber-500/20 hover:border-amber-500/60 transition-all duration-300"
                 >
                   <img
-                    src={project.src}
+                    src={thumbOf[project.src] ?? project.src}
+                    decoding="async"
                     alt={project.alt}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     loading="lazy"
