@@ -1,7 +1,11 @@
 {
-  "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [{ "source": "/((?!assets/|arif/).*)", "destination": "/index.html" }],
+  "rewrites": [
+    { "source": "/services", "destination": "/services.html" },
+    { "source": "/projects", "destination": "/projects.html" },
+    { "source": "/featured", "destination": "/featured.html" },
+    { "source": "/((?!assets/|arif/).*)", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
