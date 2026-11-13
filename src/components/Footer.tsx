@@ -61,7 +61,7 @@ export default function Footer() {
         </div>
         <div className="site-footer__legal">
           <span>© {new Date().getFullYear()} Arif and Sons Construction Co. All rights reserved.</span>
-          <span style={{ display: 'flex', gap: '1.25rem' }}>
+          <span style={{ display: 'flex', gap: '0.4rem 1.25rem', flexWrap: 'wrap' }}>
             {SOCIALS.map((s) => (
               <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer">
                 {s.name}

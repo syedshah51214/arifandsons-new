@@ -34,5 +34,28 @@ export function TikTokIcon({ size = 20 }: P) {
   );
 }
 
-export const socialIcon = (name: string) =>
-  name === 'Facebook' ? <FacebookIcon /> : name === 'Instagram' ? <InstagramIcon /> : <TikTokIcon />;
+export function YouTubeIcon({ size = 20 }: P) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31.3 31.3 0 000 12a31.3 31.3 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31.3 31.3 0 0024 12a31.3 31.3 0 00-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z" />
+    </svg>
+  );
+}
+
+export function XIcon({ size = 18 }: P) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23 5.45-6.23zm-1.16 17.52h1.83L7.08 4.13H5.12l11.96 15.64z" />
+    </svg>
+  );
+}
+
+const icons: Record<string, JSX.Element> = {
+  Facebook: <FacebookIcon />,
+  Instagram: <InstagramIcon />,
+  TikTok: <TikTokIcon />,
+  YouTube: <YouTubeIcon />,
+  X: <XIcon />,
+};
+
+export const socialIcon = (name: string) => icons[name] ?? null;

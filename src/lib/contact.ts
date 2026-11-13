@@ -12,4 +12,6 @@ export const SOCIALS = [
   { name: 'Facebook', href: 'https://facebook.com/arifandsonsconstruction' },
   { name: 'Instagram', href: 'https://www.instagram.com/engineersuleiman05/' },
   { name: 'TikTok', href: 'https://www.tiktok.com/@engineersalman05' },
+  { name: 'YouTube', href: 'https://www.youtube.com/@engineersalman' },
+  { name: 'X', href: 'https://x.com/engineersalman8' },
 ] as const;
