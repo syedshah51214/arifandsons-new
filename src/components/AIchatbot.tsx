@@ -84,7 +84,7 @@ export default function AIchatbot() {
       {/* Chatbot Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group fixed bottom-6 left-6 z-[85] flex items-center justify-center w-16 h-16 rounded-full bg-slate-900 hover:bg-slate-950 shadow-2xl transition-all transform hover:scale-110 border-2 border-amber-500"
+        className="group fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[85] flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-slate-900 hover:bg-slate-950 shadow-2xl transition-all transform hover:scale-110 border-2 border-amber-500"
         aria-label="Open AI Chatbot"
         title="AI Chatbot - Click to open"
       >

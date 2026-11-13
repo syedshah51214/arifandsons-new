@@ -33,6 +33,7 @@ export default function Footer() {
               {link('process', 'How we work')}
               {link('team', 'Team')}
               {link('clients', 'Where we build')}
+              {link('questions', 'Questions')}
             </ul>
           </div>
           <div>

@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { HashRouter } from 'react-router-dom';
-import { HelmetProvider } from './lib/helmetFallback';
+import { createRoot, hydrateRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import '@fontsource/big-shoulders-display/latin-700';
 import '@fontsource/big-shoulders-display/latin-800';
@@ -9,23 +8,23 @@ import '@fontsource/big-shoulders-display/latin-900';
 import '@fontsource-variable/hanken-grotesk/wght';
 import './index.css';
 
-try {
-  const root = document.getElementById('root');
-  if (!root) {
-    document.body.innerHTML = '<h1 style="color:red;padding:20px;">ERROR: root element not found!</h1>';
-    throw new Error('root element not found');
-  }
-  
-  createRoot(root).render(
-    <StrictMode>
-      <HelmetProvider>
-        <HashRouter>
-          <App />
-        </HashRouter>
-      </HelmetProvider>
-    </StrictMode>
-  );
-} catch (err) {
-  console.error('Fatal error:', err);
-  document.body.innerHTML = `<div style="color:red;padding:20px;font-family:monospace;background:#222;white-space:pre-wrap;">${String(err)}</div>`;
+const root = document.getElementById('root')!;
+
+// Old links looked like /#/services. Send them to the real page address.
+const legacy = window.location.hash.startsWith('#/');
+if (legacy) window.history.replaceState(null, '', window.location.hash.slice(1));
+
+const app = (
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>
+);
+
+// Pages are generated as HTML at build time; attach to that HTML when it is there.
+if (root.hasChildNodes() && !legacy) hydrateRoot(root, app);
+else {
+  root.innerHTML = '';
+  createRoot(root).render(app);
 }

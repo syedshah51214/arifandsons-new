@@ -14,7 +14,11 @@ const stats = [
 ];
 
 function Count({ to, run }: { to: number; run: boolean }) {
-  const [n, setN] = useState(0);
+  // The page's saved HTML carries the real figure; the count-up starts from zero once the page is live.
+  const [n, setN] = useState(to);
+  useEffect(() => {
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) setN(0);
+  }, []);
   useEffect(() => {
     if (!run) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -60,15 +64,17 @@ function lahoreNow() {
 export default function SiteBoard({ onPickKind }: { onPickKind: (k: ProjectKind) => void }) {
   const [statsRef, statsSeen] = useSeen<HTMLDListElement>(0.4);
   const [barsRef, barsSeen] = useSeen<HTMLUListElement>(0.4);
-  const [now, setNow] = useState(lahoreNow);
+  // Worked out in the browser only, so the saved HTML never shows a stale "open now".
+  const [now, setNow] = useState<{ day: number; hour: number } | null>(null);
 
   useEffect(() => {
+    setNow(lahoreNow());
     const id = window.setInterval(() => setNow(lahoreNow()), 60000);
     return () => window.clearInterval(id);
   }, []);
 
-  const today = week[now.day];
-  const open = !!today && now.hour >= today[0] && now.hour < today[1];
+  const today = now ? week[now.day] : null;
+  const open = !!now && !!today && now.hour >= today[0] && now.hour < today[1];
   const max = Math.max(...kinds.map(countByKind));
 
   return (
@@ -101,11 +107,11 @@ export default function SiteBoard({ onPickKind }: { onPickKind: (k: ProjectKind)
       <section className="tile tile--hours">
         <h3 className="tile__title">
           Office hours
-          <span className={`status${open ? ' status--on' : ''}`}>{open ? 'Open now' : 'Closed now'}</span>
+          {now && <span className={`status${open ? ' status--on' : ''}`}>{open ? 'Open now' : 'Closed now'}</span>}
         </h3>
         <ul className="hours">
           {rows.map((r) => (
-            <li key={r.label} className={r.days.includes(now.day) ? 'is-today' : ''}>
+            <li key={r.label} className={now && r.days.includes(now.day) ? 'is-today' : ''}>
               <span>{r.label}</span>
               <span>{r.hours}</span>
             </li>

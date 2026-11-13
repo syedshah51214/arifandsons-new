@@ -487,6 +487,14 @@ video {
   filter: drop-shadow(0 24px 60px rgba(0, 0, 0, 0.55));
 }
 
+.hero__title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 2vh, 1.5rem);
+}
+
 .hero__name {
   margin: 0;
   display: flex;
@@ -2040,5 +2048,89 @@ h2 {
   }
   .bars__bar i {
     transition: none;
+  }
+}
+
+/* ---------- questions ---------- */
+.faq {
+  max-width: 860px;
+  border-top: 1px solid var(--line);
+}
+
+.faq details {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  line-height: 1.1;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary::after {
+  content: '+';
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--hardhat);
+}
+
+.faq details[open] summary::after {
+  content: '\2212';
+}
+
+.faq details p {
+  margin: 0;
+  padding: 0 0 1.4rem;
+  max-width: 62ch;
+  color: #c5d0df;
+}
+
+/* ---------- small screens ---------- */
+@media (max-width: 600px) {
+  body {
+    font-size: 1rem;
+  }
+  .hero {
+    height: 220vh;
+  }
+  .btn {
+    width: 100%;
+  }
+  .btn--sm,
+  .hero__skip,
+  .gallery-foot .btn {
+    width: auto;
+  }
+  .hero__actions {
+    width: 100%;
+  }
+  .gallery {
+    gap: 6px;
+  }
+  .tile--live {
+    min-height: 260px;
+  }
+  .wa-float {
+    width: 52px;
+    height: 52px;
+  }
+  .wa-float svg {
+    width: 26px;
+    height: 26px;
   }
 }

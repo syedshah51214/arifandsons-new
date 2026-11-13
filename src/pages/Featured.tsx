@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import { Helmet } from '../lib/helmetFallback';
 import Header from '../components/Header';
 import { thumbOf } from '../data/projects';
 import Footer from '../components/Footer';
@@ -90,12 +89,6 @@ export default function Featured() {
     <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
       <Header />
       <AIchatbot />
-      <Helmet>
-        <title>Featured Projects — Arif & Sons</title>
-        <meta name="description" content="Featured construction projects in Lahore. Premium residential and commercial projects completed by Arif & Sons." />
-        <meta name="keywords" content="featured projects Lahore, premium construction, residential projects, commercial construction, 5 marla projects Lahore" />
-        <link rel="canonical" href={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects/featured`} />
-      </Helmet>
 
       {/* Header Section */}
       <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
@@ -120,7 +113,7 @@ export default function Featured() {
         </nav>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-          Featured Projects
+          Featured Homes in Lahore
         </h1>
         <p className="text-gray-400 text-base md:text-lg max-w-3xl">
           Explore our premium 5 Marla residential projects showcasing exceptional architecture, quality craftsmanship, and modern design. These are some of our most acclaimed projects in Lahore.

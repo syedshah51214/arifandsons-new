@@ -1,15 +1,14 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "arif-and-sons-website",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "optimize-video": "ffmpeg -i src/assets/abc.mp4 -vcodec libx264 -crf 28 -preset veryfast -movflags +faststart src/assets/abc.optimized.mp4"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
     "@fontsource-variable/hanken-grotesk": "^5.3.0",

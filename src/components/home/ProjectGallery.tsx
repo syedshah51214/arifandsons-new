@@ -76,9 +76,9 @@ export default function ProjectGallery({ filter, onFilter }: Props) {
 
       <div className="gallery">
         {shown.map((p, i) => (
-          <button key={p.src} type="button" className="gallery__item" onClick={() => setOpen(i)} onMouseEnter={() => preload(p.src)} aria-label={`Open photo: ${p.title}, ${p.location}`}>
-            <img src={p.thumb} alt="" loading="lazy" decoding="async" />
-            <span>
+          <button key={p.src} type="button" className="gallery__item" onClick={() => setOpen(i)} onMouseEnter={() => preload(p.src)}>
+            <img src={p.thumb} alt={`${p.title} in ${p.location} by Arif and Sons`} loading="lazy" decoding="async" />
+            <span aria-hidden="true">
               {p.title}
               <small>{p.location}</small>
             </span>

@@ -22,8 +22,7 @@ interface Props {
 export default function HeroStage({ onProgress, skipIntro = false }: Props) {
   const heroRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const [phase, setPhase] = useState<'video' | 'logo'>(introPlayed || skipIntro || reduced ? 'logo' : 'video');
+  const [phase, setPhase] = useState<'video' | 'logo'>(introPlayed || skipIntro ? 'logo' : 'video');
   // If we start on the logo there is no need to download the video at all.
   const [useVideo] = useState(phase === 'video');
   const phaseRef = useRef(phase);
@@ -38,6 +37,10 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      showLogo();
+      return;
+    }
     v.play().catch(showLogo); // autoplay blocked: go straight to the logo
     const safety = window.setTimeout(showLogo, 12000);
     return () => window.clearTimeout(safety);
@@ -48,6 +51,7 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
     const hero = heroRef.current;
     if (!hero) return;
     let frame = 0;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const update = () => {
       frame = 0;
       const total = Math.max(1, hero.offsetHeight - window.innerHeight);
@@ -75,7 +79,7 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
       window.removeEventListener('resize', onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [onProgress, reduced, showLogo]);
+  }, [onProgress, showLogo]);
 
   return (
     <section ref={heroRef} className={`hero${phase === 'logo' ? ' is-logo' : ''}`} aria-label="Arif and Sons Construction Co.">
@@ -103,16 +107,18 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
 
         <div className="hero__lockup">
           <div className="hero__mark">
-            <img src={mark} alt="" width={640} height={439} />
+            <img src={mark} alt="Arif and Sons Construction Co. logo" width={640} height={439} />
           </div>
-          <h1 className="hero__name">
-            <span className="hero__word hero__word--a"><span>Arif</span></span>
-            <span className="hero__word hero__word--b"><span>and</span></span>
-            <span className="hero__word hero__word--c"><span>Sons</span></span>
+          <h1 className="hero__title">
+            <span className="hero__name">
+              <span className="hero__word hero__word--a"><span>Arif</span></span>{' '}
+              <span className="hero__word hero__word--b"><span>and</span></span>{' '}
+              <span className="hero__word hero__word--c"><span>Sons</span></span>
+            </span>{' '}
+            <span className="hero__sub">
+              <span>Construction Co.</span>
+            </span>
           </h1>
-          <p className="hero__sub">
-            <span>Construction Co.</span>
-          </p>
         </div>
 
         <div className="hero__after">
@@ -120,8 +126,8 @@ export default function HeroStage({ onProgress, skipIntro = false }: Props) {
             <div className="hero__after-inner">
               <p className="h-display h-xl">Houses, plazas and interiors, built properly in Lahore since 1995.</p>
               <p className="lede">
-                From the first survey to the last coat of paint, one team handles your grey structure, finishing and
-                handover.
+                Arif and Sons is a construction company in Lahore. From the first survey to the last coat of paint, one
+                team handles your grey structure, finishing and handover.
               </p>
               <div className="hero__actions">
                 <a className="btn btn--brick" href={QUOTE_LINK} target="_blank" rel="noopener noreferrer">

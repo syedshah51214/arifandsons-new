@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import { Helmet } from '../lib/helmetFallback';
 import Header from '../components/Header';
 import { thumbOf } from '../data/projects';
 import Footer from '../components/Footer';
@@ -119,12 +118,6 @@ export default function Projects() {
     <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
       <Header />
       <AIchatbot />
-      <Helmet>
-        <title>Our Projects — Arif & Sons</title>
-        <meta name="description" content="View our completed construction projects in Lahore. Residential, commercial, renovation projects and more." />
-        <meta name="keywords" content="construction projects Lahore, completed projects, residential construction, commercial projects, renovation Lahore" />
-        <link rel="canonical" href={`${typeof window !== 'undefined' ? window.location.origin : ''}/projects`} />
-      </Helmet>
 
       {/* Header Section */}
       <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
@@ -143,7 +136,7 @@ export default function Projects() {
         </nav>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-          Our Projects
+          Our Construction Projects in Lahore
         </h1>
         <p className="text-gray-400 text-base md:text-lg max-w-3xl">
           Explore our diverse portfolio of construction projects across Lahore. From residential renovations to commercial complexes, view our quality craftsmanship and completed work.

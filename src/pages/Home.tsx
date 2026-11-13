@@ -16,6 +16,7 @@ import CEO from '../assets/CEO.webp';
 import localInfo from '../config/localInfo';
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, QUOTE_LINK, SOCIALS } from '../lib/contact';
 import { scrollToSection } from '../lib/useGoToSection';
+import { faqs } from '../seo';
 
 const ticker = [
   'House construction',
@@ -95,8 +96,8 @@ export default function Home() {
             <div className="section-head section-head--split">
               <h2 className="h-display h-lg">Three decades of building in Lahore, on one board.</h2>
               <p className="lede">
-                Arif and Sons Construction Company delivers residential and commercial projects across Lahore. Here is
-                the company at a glance: what we have built, where we work and when you can reach us.
+                Arif and Sons Construction Co. is a Lahore construction company delivering residential and commercial
+                projects across the city. Here is the company at a glance: what we have built, where we work and when you can reach us.
               </p>
             </div>
             <SiteBoard
@@ -187,7 +188,7 @@ export default function Home() {
         <section id="leadership" className="band band--navy">
           <div className="wrap leader">
             <figure className="leader__photo">
-              <img src={CEO} alt="Suleiman Arif Hussain, Chief Executive Officer" loading="lazy" />
+              <img src={CEO} alt="Suleiman Arif Hussain, Chief Executive Officer of Arif and Sons Construction Co." loading="lazy" decoding="async" width={900} height={1125} />
             </figure>
             <div>
               <h2 className="h-display h-lg">Suleiman Arif Hussain</h2>
@@ -250,6 +251,23 @@ export default function Home() {
             </div>
           </div>
           <ClientsSlider />
+        </section>
+
+        {/* Questions */}
+        <section id="questions" className="band band--deep">
+          <div className="wrap">
+            <div className="section-head">
+              <h2 className="h-display h-lg">Questions people ask before they build</h2>
+            </div>
+            <div className="faq">
+              {faqs.map((f, i) => (
+                <details key={f.q} open={i === 0}>
+                  <summary>{f.q}</summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
         </section>
 
         <div className="tape" aria-hidden="true" />

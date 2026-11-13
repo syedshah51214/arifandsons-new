@@ -1,5 +1,4 @@
 import { Building2, MessageCircle } from 'lucide-react';
-import { Helmet } from '../lib/helmetFallback';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -26,34 +25,12 @@ export default function Services() {
     'Exterior painting',
   ];
 
-  // SEO metadata (server-safe via react-helmet-async)
-  const ld = {
-    '@context': 'https://schema.org',
-    '@type': 'ConstructionCompany',
-    name: 'Arif & Sons',
-    url: typeof window !== 'undefined' ? window.location.origin : 'https://arifandsons.com',
-    telephone: '+923258579677',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Lahore',
-      addressCountry: 'PK',
-    },
-    areaServed: 'Lahore',
-    description: 'Construction services in Lahore including renovation, building construction, foundations and civil engineering consulting.',
-  };
 
 
   return (
     <div className="services-page min-h-screen bg-gray-900 text-white overflow-x-hidden relative">
       <Header />
       <AIchatbot />
-      <Helmet>
-        <title>Construction Services Lahore — Arif & Sons</title>
-        <meta name="description" content="Arif & Sons delivers expert construction services in Lahore: home renovation, building construction, bathroom remodeling, concrete foundation installation, and civil engineering consulting." />
-        <meta name="keywords" content="construction services Lahore, home renovation Lahore, building construction, bathroom remodeling, concrete foundation installation, civil engineering consulting, turnkey construction Lahore, residential construction Lahore" />
-        <link rel="canonical" href={`${typeof window !== 'undefined' ? window.location.origin : ''}/services`} />
-        <script type="application/ld+json">{JSON.stringify(ld)}</script>
-      </Helmet>
 
       {/* Decorative blurred logo background */}
       <div aria-hidden className="absolute inset-0 -z-10 flex items-center justify-center">
@@ -79,7 +56,7 @@ export default function Services() {
           </ol>
         </nav>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Construction Services in Lahore — Our Services</h1>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Construction Services in Lahore</h1>
         <p className="text-gray-400 text-base md:text-lg">Comprehensive construction solutions in Lahore: home renovation, building construction, concrete foundation installation, and civil engineering consulting.</p>
       </header>
 
@@ -129,7 +106,7 @@ export default function Services() {
           <ul className="flex flex-wrap gap-3">
             <li><a href="/" className="text-gray-400 hover:text-amber-400">Home</a></li>
             <li><a href="/services" className="text-gray-400 hover:text-amber-400">Services</a></li>
-            <li><a href="#contact" className="text-gray-400 hover:text-amber-400">Contact</a></li>
+            <li><a href="/#contact" className="text-gray-400 hover:text-amber-400">Contact</a></li>
           </ul>
         </nav>
 
