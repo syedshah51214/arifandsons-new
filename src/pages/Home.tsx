@@ -305,7 +305,7 @@ export default function Home() {
                     <MapPin size={22} aria-hidden="true" />
                     <span>
                       <small>Office</small>
-                      Lake City, Lahore, Pakistan
+                      {localInfo.addressLine}
                     </span>
                   </a>
                 </li>

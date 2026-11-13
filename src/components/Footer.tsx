@@ -50,7 +50,7 @@ export default function Footer() {
             <ul>
               <li><a href={`tel:${PHONE_TEL}`}>{PHONE_DISPLAY}</a></li>
               <li><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
-              <li>Lake City, Lahore, Pakistan</li>
+              <li>{localInfo.addressLine}</li>
               <li>
                 <a href={localInfo.googleMapsSearchUrl} target="_blank" rel="noopener noreferrer">
                   Find us on Google Maps

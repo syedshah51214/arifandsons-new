@@ -12,7 +12,7 @@ const defaultResponses: { [key: string]: string } = {
   'hello': 'Hello! 👋 How can I help you today? Are you interested in our construction services?',
   'hi': 'Hi there! 👋 Welcome to Arif & Sons Construction. How can we assist you?',
   'services': 'We offer a wide range of construction services including:\n✓ Residential Construction\n✓ Commercial Projects\n✓ High-Rise Buildings\n✓ Renovation & Remodeling\n✓ Turnkey Solutions\n✓ Sustainable Building\n\nWould you like to know more about any of these?',
-  'contact': 'You can reach us at:\n📱 Phone: +92 325 8579677\n📧 Email: info@arifandsons.com\n📍 Location: Lake City, Lahore, Pakistan',
+  'contact': 'You can reach us at:\n📱 Phone: +92 325 8579677\n📧 Email: info@arifandsons.com\n📍 Location: 3B Commercial Plaza, Main Boulevard, Park Avenue Housing Society, Lahore',
   'team': 'Our CEO, Suleiman Arif Hussain, leads our expert team with over 10+ years of experience in construction management. We have 200+ experts working on various projects.',
   'projects': 'We have completed 500+ projects including residential villas, commercial spaces, and high-rise buildings. You can view our portfolio in the Services section.',
   'quote': 'Would you like a project quote? Please share details about your project and we\'ll get back to you shortly! Or click "Get Quote" button for quick inquiry.',

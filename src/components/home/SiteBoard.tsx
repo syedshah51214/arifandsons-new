@@ -40,11 +40,10 @@ function Count({ to, run }: { to: number; run: boolean }) {
 }
 
 // Office hours, Lahore time. Index 0 is Sunday.
-const week: Array<[number, number] | null> = [null, [9, 18], [9, 18], [9, 18], [9, 18], [9, 18], [10, 15]];
+const week: Array<[number, number] | null> = [[8, 18], [8, 18], [8, 18], [8, 18], [8, 18], null, [8, 18]];
 const rows = [
-  { label: 'Mon to Fri', hours: '9 am to 6 pm', days: [1, 2, 3, 4, 5] },
-  { label: 'Saturday', hours: '10 am to 3 pm', days: [6] },
-  { label: 'Sunday', hours: 'Closed', days: [0] },
+  { label: 'Sat to Thu', hours: '8 am to 6 pm', days: [6, 0, 1, 2, 3, 4] },
+  { label: 'Friday', hours: 'Closed', days: [5] },
 ];
 
 function lahoreNow() {

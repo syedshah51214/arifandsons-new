@@ -61,7 +61,7 @@ export const faqs = [
   },
   {
     q: 'What are your office hours?',
-    a: 'Monday to Friday, 9 am to 6 pm, and Saturday, 10 am to 3 pm. The office is closed on Sunday.',
+    a: 'Saturday to Thursday, 8 am to 6 pm. The office is closed on Friday. You will find us at 3B Commercial Plaza, Main Boulevard, Park Avenue Housing Society, Lahore.',
   },
 ];
 
@@ -79,8 +79,12 @@ const business = {
   address: { '@type': 'PostalAddress', ...localInfo.address },
   areaServed: localInfo.areasServed.map((name) => ({ '@type': 'Place', name })),
   openingHoursSpecification: [
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '18:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '10:00', closes: '15:00' },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+      opens: '08:00',
+      closes: '18:00',
+    },
   ],
   sameAs: SOCIALS.map((s) => s.href),
 };

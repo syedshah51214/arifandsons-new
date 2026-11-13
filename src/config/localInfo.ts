@@ -6,12 +6,12 @@ const localInfo = {
   telephone: '+923258579677',
   email: 'info@arifandsons.com',
   foundingYear: 1995,
-  // Replace with the exact office address when available
+  // Same address as the Google Business Profile
   address: {
-    streetAddress: 'Lake City',
+    streetAddress: '3B Commercial Plaza, Main Boulevard, Park Avenue Housing Society',
     addressLocality: 'Lahore',
     addressRegion: 'Punjab',
-    postalCode: '54000',
+    postalCode: '54792',
     addressCountry: 'PK',
   },
   areasServed: [
@@ -23,7 +23,8 @@ const localInfo = {
     'Model Town, Lahore',
     'Allama Iqbal Town, Lahore',
   ],
-  openingHours: ['Mo-Fr 09:00-18:00', 'Sa 10:00-15:00'],
+  openingHours: ['Sa-Th 08:00-18:00'],
+  addressLine: '3B Commercial Plaza, Main Boulevard, Park Avenue Housing Society, Lahore',
   description:
     'Construction company in Lahore for houses, commercial plazas and flats: grey structure, finishing, renovation, woodwork and turnkey projects.',
   googleMapsSearchUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Arif and Sons Construction Lahore')}`,
