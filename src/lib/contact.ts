@@ -14,4 +14,5 @@ export const SOCIALS = [
   { name: 'TikTok', href: 'https://www.tiktok.com/@engineersalman05' },
   { name: 'YouTube', href: 'https://www.youtube.com/@engineersalman' },
   { name: 'X', href: 'https://x.com/engineersalman8' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/engineersalman' },
 ] as const;
